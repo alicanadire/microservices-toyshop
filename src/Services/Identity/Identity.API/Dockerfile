@@ -6,11 +6,11 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Services/Identity/Identity.API/Identity.API.csproj", "src/Services/Identity/Identity.API/"]
-COPY ["src/BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "src/BuildingBlocks/BuildingBlocks/"]
-RUN dotnet restore "./src/Services/Identity/Identity.API/Identity.API.csproj"
+COPY ["Services/Identity/Identity.API/Identity.API.csproj", "Services/Identity/Identity.API/"]
+COPY ["BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "BuildingBlocks/BuildingBlocks/"]
+RUN dotnet restore "./Services/Identity/Identity.API/Identity.API.csproj"
 COPY . .
-WORKDIR "/src/src/Services/Identity/Identity.API"
+WORKDIR "/src/Services/Identity/Identity.API"
 RUN dotnet build "./Identity.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
