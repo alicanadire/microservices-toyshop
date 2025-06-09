@@ -1,23 +1,36 @@
+# Identity Service Dockerfile
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
+WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+# Copy project files
 COPY ["Services/Identity/Identity.API/Identity.API.csproj", "Services/Identity/Identity.API/"]
 COPY ["BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "BuildingBlocks/BuildingBlocks/"]
-RUN dotnet restore "./Services/Identity/Identity.API/Identity.API.csproj"
+
+# Restore dependencies
+RUN dotnet restore "Services/Identity/Identity.API/Identity.API.csproj"
+
+# Copy all source code
 COPY . .
+
+# Build the application
 WORKDIR "/src/Services/Identity/Identity.API"
-RUN dotnet build "./Identity.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "Identity.API.csproj" -c Release -o /app/build
 
+# Publish the application
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Identity.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Identity.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
+# Final stage
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Create directory for certificates
+RUN mkdir -p /https
+
 ENTRYPOINT ["dotnet", "Identity.API.dll"]
