@@ -1,0 +1,204 @@
+version: "3.4"
+
+services:
+  catalogdb:
+    container_name: catalogdb-prod
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${CATALOG_DB_PASSWORD}
+      - POSTGRES_DB=CatalogDb
+    restart: unless-stopped
+    volumes:
+      - postgres_catalog_prod:/var/lib/postgresql/data/
+    networks:
+      - eshop-network
+
+  basketdb:
+    container_name: basketdb-prod
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${BASKET_DB_PASSWORD}
+      - POSTGRES_DB=BasketDb
+    restart: unless-stopped
+    volumes:
+      - postgres_basket_prod:/var/lib/postgresql/data/
+    networks:
+      - eshop-network
+
+  identitydb:
+    container_name: identitydb-prod
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${IDENTITY_DB_PASSWORD}
+      - POSTGRES_DB=IdentityDb
+    restart: unless-stopped
+    volumes:
+      - postgres_identity_prod:/var/lib/postgresql/data/
+    networks:
+      - eshop-network
+
+  distributedcache:
+    container_name: distributedcache-prod
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    networks:
+      - eshop-network
+
+  orderdb:
+    container_name: orderdb-prod
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${ORDER_DB_PASSWORD}
+    restart: unless-stopped
+    volumes:
+      - sqlserver_data_prod:/var/opt/mssql
+    networks:
+      - eshop-network
+
+  messagebroker:
+    container_name: messagebroker-prod
+    hostname: ecommerce-mq-prod
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    restart: unless-stopped
+    volumes:
+      - rabbitmq_data_prod:/var/lib/rabbitmq
+    networks:
+      - eshop-network
+
+  identity.api:
+    container_name: identity.api-prod
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__Database=Server=identitydb;Port=5432;Database=IdentityDb;User Id=postgres;Password=${IDENTITY_DB_PASSWORD};Include Error Detail=false
+      - Serilog__MinimumLevel__Default=Information
+      - IdentityServer__IssuerUri=https://${DOMAIN_NAME}
+      - IdentityServer__PublicOrigin=https://${DOMAIN_NAME}
+    depends_on:
+      - identitydb
+    restart: unless-stopped
+    networks:
+      - eshop-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.identity.rule=Host(`identity.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.identity.tls=true"
+      - "traefik.http.routers.identity.tls.certresolver=letsencrypt"
+
+  catalog.api:
+    container_name: catalog.api-prod
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__Database=Server=catalogdb;Port=5432;Database=CatalogDb;User Id=postgres;Password=${CATALOG_DB_PASSWORD};Include Error Detail=false
+    depends_on:
+      - catalogdb
+    restart: unless-stopped
+    networks:
+      - eshop-network
+
+  basket.api:
+    container_name: basket.api-prod
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__Database=Server=basketdb;Port=5432;Database=BasketDb;User Id=postgres;Password=${BASKET_DB_PASSWORD};Include Error Detail=false
+      - ConnectionStrings__Redis=distributedcache:6379
+      - GrpcSettings__DiscountUrl=http://discount.grpc:8080
+      - MessageBroker__Host=amqp://ecommerce-mq-prod:5672
+      - MessageBroker__UserName=${RABBITMQ_USER}
+      - MessageBroker__Password=${RABBITMQ_PASSWORD}
+    depends_on:
+      - basketdb
+      - distributedcache
+      - discount.grpc
+      - messagebroker
+    restart: unless-stopped
+    networks:
+      - eshop-network
+
+  discount.grpc:
+    container_name: discount.grpc-prod
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__Database=Data Source=discountdb
+    restart: unless-stopped
+    networks:
+      - eshop-network
+
+  ordering.api:
+    container_name: ordering.api-prod
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__Database=Server=orderdb;Database=OrderDb;User Id=sa;Password=${ORDER_DB_PASSWORD};Encrypt=True;TrustServerCertificate=False
+      - MessageBroker__Host=amqp://ecommerce-mq-prod:5672
+      - MessageBroker__UserName=${RABBITMQ_USER}
+      - MessageBroker__Password=${RABBITMQ_PASSWORD}
+      - FeatureManagement__OrderFullfilment=true
+    depends_on:
+      - orderdb
+      - messagebroker
+    restart: unless-stopped
+    networks:
+      - eshop-network
+
+  yarpapigateway:
+    container_name: yarpapigateway-prod
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - IdentityServerSettings__Authority=https://identity.${DOMAIN_NAME}
+      - IdentityServerSettings__ApiName=gateway
+      - IdentityServerSettings__RequireHttpsMetadata=true
+    depends_on:
+      - identity.api
+      - catalog.api
+      - basket.api
+      - ordering.api
+    restart: unless-stopped
+    networks:
+      - eshop-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gateway.rule=Host(`api.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.gateway.tls=true"
+      - "traefik.http.routers.gateway.tls.certresolver=letsencrypt"
+
+  shopping.web:
+    container_name: shopping.web-prod
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ApiSettings__GatewayAddress=https://api.${DOMAIN_NAME}
+      - IdentityServerSettings__Authority=https://identity.${DOMAIN_NAME}
+      - IdentityServerSettings__ClientId=shopping-web
+      - IdentityServerSettings__ClientSecret=${SHOPPING_WEB_CLIENT_SECRET}
+      - IdentityServerSettings__RequireHttpsMetadata=true
+      - IdentityServerSettings__Scope=openid profile email roles catalog basket ordering shopping
+    depends_on:
+      - identity.api
+      - yarpapigateway
+    restart: unless-stopped
+    networks:
+      - eshop-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.shopping.rule=Host(`${DOMAIN_NAME}`)"
+      - "traefik.http.routers.shopping.tls=true"
+      - "traefik.http.routers.shopping.tls.certresolver=letsencrypt"
+
+networks:
+  eshop-network:
+    driver: bridge
+
+volumes:
+  postgres_catalog_prod:
+  postgres_basket_prod:
+  postgres_identity_prod:
+  sqlserver_data_prod:
+  rabbitmq_data_prod:

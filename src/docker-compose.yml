@@ -1,10 +1,13 @@
-version: '3.4'
+version: "3.4"
 
 services:
   catalogdb:
     image: postgres
 
   basketdb:
+    image: postgres
+
+  identitydb:
     image: postgres
 
   distributedcache:
@@ -15,6 +18,14 @@ services:
 
   messagebroker:
     image: rabbitmq:management
+
+  identity.api:
+    image: ${DOCKER_REGISTRY-}identityapi
+    build:
+      context: .
+      dockerfile: Services/Identity/Identity.API/Dockerfile
+    ports:
+      - "5001:8080"
 
   catalog.api:
     image: ${DOCKER_REGISTRY-}catalogapi
@@ -67,9 +78,4 @@ services:
 volumes:
   postgres_catalog:
   postgres_basket:
-
-
-
-
-
-
+  postgres_identity:
