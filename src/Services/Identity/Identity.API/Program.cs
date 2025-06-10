@@ -41,7 +41,8 @@ try
         options.Events.RaiseFailureEvents = true;
         options.Events.RaiseSuccessEvents = true;
         options.EmitStaticAudienceClaim = true;
-        options.IssuerUri = "http://localhost:5000";
+        // Use environment variable or default to localhost
+        options.IssuerUri = builder.Configuration["IdentityServer:IssuerUri"] ?? "http://localhost:5000";
     })
     .AddInMemoryIdentityResources(IdentityServerConfig.IdentityResources)
     .AddInMemoryApiScopes(IdentityServerConfig.ApiScopes)
@@ -73,7 +74,7 @@ try
         var context = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        
+
         await SeedDataAsync(context, userManager, roleManager);
     }
 
@@ -113,7 +114,7 @@ static async Task SeedDataAsync(IdentityDbContext context, UserManager<Applicati
     {
         await roleManager.CreateAsync(new IdentityRole("Admin"));
     }
-    
+
     if (!await roleManager.RoleExistsAsync("Customer"))
     {
         await roleManager.CreateAsync(new IdentityRole("Customer"));
@@ -122,7 +123,7 @@ static async Task SeedDataAsync(IdentityDbContext context, UserManager<Applicati
     // Create admin user
     var adminEmail = "admin@eshop.com";
     var adminUser = await userManager.FindByEmailAsync(adminEmail);
-    
+
     if (adminUser == null)
     {
         adminUser = new ApplicationUser
@@ -134,7 +135,7 @@ static async Task SeedDataAsync(IdentityDbContext context, UserManager<Applicati
             EmailConfirmed = true,
             IsActive = true
         };
-        
+
         await userManager.CreateAsync(adminUser, "Password123!");
         await userManager.AddToRoleAsync(adminUser, "Admin");
     }
@@ -142,7 +143,7 @@ static async Task SeedDataAsync(IdentityDbContext context, UserManager<Applicati
     // Create test customer
     var customerEmail = "customer@eshop.com";
     var customerUser = await userManager.FindByEmailAsync(customerEmail);
-    
+
     if (customerUser == null)
     {
         customerUser = new ApplicationUser
@@ -154,7 +155,7 @@ static async Task SeedDataAsync(IdentityDbContext context, UserManager<Applicati
             EmailConfirmed = true,
             IsActive = true
         };
-        
+
         await userManager.CreateAsync(customerUser, "Password123!");
         await userManager.AddToRoleAsync(customerUser, "Customer");
     }
