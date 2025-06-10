@@ -59,17 +59,17 @@ public static class IdentityServerConfig
                 AllowOfflineAccess = true,
 
                 RedirectUris = {
-                    "http://localhost:6005/signin-oidc",
+                    "http://localhost:5000/signin-oidc",
                     "http://shopping.web:8080/signin-oidc"
                 },
                 PostLogoutRedirectUris = {
-                    "http://localhost:6005/signout-callback-oidc",
-                    "http://localhost:6005/",
+                    "http://localhost:5000/signout-callback-oidc",
+                    "http://localhost:5000/",
                     "http://shopping.web:8080/signout-callback-oidc",
                     "http://shopping.web:8080/"
                 },
                 AllowedCorsOrigins = {
-                    "http://localhost:6005",
+                    "http://localhost:5000",
                     "http://shopping.web:8080"
                 },
 
