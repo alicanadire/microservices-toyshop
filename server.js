@@ -1002,56 +1002,258 @@ app.get("/products/:id", (req, res) => {
   if (!product) {
     return res
       .status(404)
-      .send(
-        renderTemplate("Product Not Found", "<h2>Product Not Found</h2>", req),
-      );
+      .send(renderTemplate("Ürün Bulunamadı", "<h2>Ürün Bulunamadı</h2>", req));
   }
 
-  const body = `<div class="container mt-3">
-            <div class="row">
-                <div class="col-md-6">
-                    <div style="height: 400px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; border: 1px solid #dee2e6;">
-                        <span>Product Image</span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <h2>${product.name}</h2>
-                    <h4 class="text-success">$${product.price.toFixed(2)}</h4>
-                    <p class="lead">${product.description}</p>
-                    <p><strong>Category:</strong> ${product.category}</p>
+  const emoji = product.name.match(/[🏠🏰🏎️🧸🎮📱🎨🚁]/)?.[0] || "🧸";
+  const stars =
+    "★".repeat(Math.floor(product.rating)) +
+    "☆".repeat(5 - Math.floor(product.rating));
+  const relatedProducts = mockProducts
+    .filter((p) => p.id !== product.id && p.category === product.category)
+    .slice(0, 3);
 
-                    <div class="form-group">
-                        <label for="quantity">Quantity:</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary quantity-left-minus" type="button">
-                                    <i class="fa fa-minus"></i>
-                                </button>
+  const body = `
+    <div class="main-container">
+        <div class="container py-4">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item"><a href="/products" class="text-decoration-none">Oyuncaklar</a></li>
+                    <li class="breadcrumb-item active">${product.name}</li>
+                </ol>
+            </nav>
+
+            <div class="row g-5">
+                <!-- Product Images -->
+                <div class="col-lg-6">
+                    <div class="product-image-main mb-3" style="height: 500px; background: linear-gradient(135deg, var(--blue-color), var(--pink-color)); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 8rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                        ${emoji}
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-3">
+                            <div class="product-thumb" style="height: 100px; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer;">
+                                ${emoji}
                             </div>
-                            <input type="number" id="quantity" name="quantity" class="form-control text-center" value="1" min="1">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary quantity-right-plus" type="button">
-                                    <i class="fa fa-plus"></i>
-                                </button>
+                        </div>
+                        <div class="col-3">
+                            <div class="product-thumb" style="height: 100px; background: linear-gradient(45deg, var(--accent-color), var(--purple-color)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer;">
+                                📦
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="product-thumb" style="height: 100px; background: linear-gradient(45deg, var(--secondary-color), var(--blue-color)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer;">
+                                🎁
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="product-thumb" style="height: 100px; background: linear-gradient(45deg, var(--pink-color), var(--accent-color)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer;">
+                                ✨
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <button class="btn btn-success btn-lg" onclick="addToCart(${product.id})">
-                        <i class="fa fa-shopping-cart"></i> Add to Cart
-                    </button>
-                    <a href="/products" class="btn btn-secondary btn-lg ml-2">
-                        <i class="fa fa-arrow-left"></i> Back to Products
-                    </a>
+                <!-- Product Info -->
+                <div class="col-lg-6">
+                    <div class="product-info">
+                        <span class="badge bg-primary mb-3">${product.category}</span>
+                        <h1 class="fw-bold mb-3">${product.name}</h1>
+
+                        <div class="rating mb-3">
+                            <span class="text-warning">${stars}</span>
+                            <span class="text-muted ms-2">(${product.rating}) • ${Math.floor(Math.random() * 100 + 50)} değerlendirme</span>
+                        </div>
+
+                        <div class="price-section mb-4">
+                            <h2 class="price-tag mb-0">₺${(product.price * 30).toFixed(2)}</h2>
+                            <small class="text-muted text-decoration-line-through">₺${(product.price * 35).toFixed(2)}</small>
+                            <span class="badge bg-success ms-2">%14 İndirim</span>
+                        </div>
+
+                        <p class="lead mb-4">${product.description}</p>
+
+                        <!-- Product Details -->
+                        <div class="product-details mb-4">
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="detail-item p-3 bg-light rounded">
+                                        <i class="fas fa-child text-primary me-2"></i>
+                                        <strong>Yaş Grubu:</strong> ${product.ageRange}
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="detail-item p-3 bg-light rounded">
+                                        <i class="fas fa-tag text-success me-2"></i>
+                                        <strong>Marka:</strong> ${product.brand}
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="detail-item p-3 bg-light rounded">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <strong>Stok:</strong> Mevcut
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="detail-item p-3 bg-light rounded">
+                                        <i class="fas fa-truck text-info me-2"></i>
+                                        <strong>Kargo:</strong> Ücretsiz
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quantity and Add to Cart -->
+                        <div class="purchase-section">
+                            <div class="row g-3 align-items-center mb-4">
+                                <div class="col-auto">
+                                    <label for="quantity" class="form-label fw-bold">Adet:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="input-group" style="width: 140px;">
+                                        <button class="btn btn-outline-secondary quantity-left-minus" type="button">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" id="quantity" class="form-control text-center" value="1" min="1" max="10">
+                                        <button class="btn btn-outline-secondary quantity-right-plus" type="button">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-success btn-lg" onclick="addToCart(${product.id})">
+                                    <i class="fas fa-cart-plus me-2"></i>Sepete Ekle
+                                </button>
+                                <button class="btn btn-warning">
+                                    <i class="fas fa-heart me-2"></i>Favorilere Ekle
+                                </button>
+                            </div>
+
+                            <div class="mt-3 text-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-shield-alt me-1"></i>Güvenli ödeme
+                                    <span class="mx-2">•</span>
+                                    <i class="fas fa-undo me-1"></i>14 gün iade hakkı
+                                </small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <script>
-            function addToCart(productId) {
-                const quantity = document.getElementById('quantity').value;
-                alert('Added ' + quantity + ' item(s) to cart! (Mock functionality)');
+
+            <!-- Product Tabs -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#description">Açıklama</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#features">Özellikler</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#reviews">Değerlendirmeler</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="description">
+                                    <p class="lead">${product.description}</p>
+                                    <p>Bu harika oyuncak çocukların hayal gücünü geliştirmek için özel olarak tasarlanmıştır. Kaliteli malzemelerden üretilmiş ve güvenlik standartlarına uygun olarak test edilmiştir.</p>
+                                </div>
+                                <div class="tab-pane" id="features">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">✅ CE sertifikalı güvenli malzeme</li>
+                                        <li class="list-group-item">✅ Dayanıklı ve uzun ömürlü</li>
+                                        <li class="list-group-item">✅ Eğitici ve eğlenceli</li>
+                                        <li class="list-group-item">✅ Yaş grubuna uygun tasarım</li>
+                                        <li class="list-group-item">✅ Kolay temizlenebilir</li>
+                                    </ul>
+                                </div>
+                                <div class="tab-pane" id="reviews">
+                                    <div class="mb-4">
+                                        <h5>Müşteri Değerlendirmeleri</h5>
+                                        <div class="d-flex align-items-center mb-3">
+                                            <span class="text-warning me-2">${stars}</span>
+                                            <span class="fw-bold me-2">${product.rating}</span>
+                                            <span class="text-muted">(${Math.floor(Math.random() * 100 + 50)} değerlendirme)</span>
+                                        </div>
+                                    </div>
+                                    <div class="review-item border-bottom pb-3 mb-3">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <strong>Ayşe K.</strong>
+                                            <span class="text-warning ms-2">★★★★★</span>
+                                        </div>
+                                        <p class="mb-0">Çocuğum çok sevdi! Kaliteli ve eğlenceli bir oyuncak.</p>
+                                    </div>
+                                    <div class="review-item">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <strong>Mehmet Y.</strong>
+                                            <span class="text-warning ms-2">★★★★☆</span>
+                                        </div>
+                                        <p class="mb-0">Hızlı kargo ve güzel paketleme. Ürün açıklamaya uygun.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Products -->
+            ${
+              relatedProducts.length > 0
+                ? `
+            <div class="row mt-5">
+                <div class="col-12">
+                    <h3 class="mb-4"><i class="fas fa-heart me-2"></i>Benzer Ürünler</h3>
+                    <div class="row g-4">
+                        ${relatedProducts
+                          .map(
+                            (relatedProduct) => `
+                            <div class="col-lg-4">
+                                ${renderProductCard(relatedProduct)}
+                            </div>
+                        `,
+                          )
+                          .join("")}
+                    </div>
+                </div>
+            </div>
+            `
+                : ""
             }
-        </script>`;
+
+            <div class="text-center mt-4">
+                <a href="/products" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Tüm Oyuncaklara Dön
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addToCart(productId) {
+            const quantity = document.getElementById('quantity').value;
+            const product = ${JSON.stringify(mockProducts)}.find(p => p.id === productId);
+
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-success position-fixed';
+            notification.style.cssText = 'top: 100px; right: 20px; z-index: 9999; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);';
+            notification.innerHTML = \`
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>\${quantity} adet \${product.name}</strong> sepete eklendi!
+            \`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>`;
 
   res.send(renderTemplate(product.name, body, req));
 });
