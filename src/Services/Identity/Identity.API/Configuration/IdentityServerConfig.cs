@@ -58,8 +58,20 @@ public static class IdentityServerConfig
                 RequirePkce = true,
                 AllowOfflineAccess = true,
 
-                RedirectUris = { "http://localhost:6005/signin-oidc" },
-                PostLogoutRedirectUris = { "http://localhost:6005/signout-callback-oidc", "http://localhost:6005/" },
+                RedirectUris = {
+                    "http://localhost:6005/signin-oidc",
+                    "http://shopping.web:8080/signin-oidc"
+                },
+                PostLogoutRedirectUris = {
+                    "http://localhost:6005/signout-callback-oidc",
+                    "http://localhost:6005/",
+                    "http://shopping.web:8080/signout-callback-oidc",
+                    "http://shopping.web:8080/"
+                },
+                AllowedCorsOrigins = {
+                    "http://localhost:6005",
+                    "http://shopping.web:8080"
+                },
 
                 AllowedScopes =
                 {
