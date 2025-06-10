@@ -1,24 +1,322 @@
-﻿@model Models.Catalog.ProductModel
+@model Models.Catalog.ProductModel
 
-<div class="card">
-    <a asp-page="ProductDetail" asp-route-productId="@Model.Id"><img asp-append-version="true" class="card-img-top" src="~/images/product/@Model.ImageFile" alt=""></a>
-    <div class="card-body">
-        <h4 class="card-title"><a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="color-main">@Model.Name</a></h4>
-        <p class="card-text">@Model.Description</p>
-        <div class="row">
-            <div class="col">
-                <p class="btn btn-danger btn-block">@Model.Price $</p>
+<div class="product-card">
+    <div class="product-image-container">
+        <a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="product-link">
+            <img asp-append-version="true"
+                 class="product-image"
+                 src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                 alt="@Model.Name"
+                 loading="lazy">
+        </a>
+        <div class="product-overlay">
+            <div class="product-actions">
+                <button class="action-btn" title="Quick View">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn" title="Add to Wishlist">
+                    <i class="fas fa-heart"></i>
+                </button>
             </div>
-            <div class="col">
+        </div>
+        <div class="product-badge">
+            <span class="badge badge-new">New</span>
+        </div>
+    </div>
 
-                @*<a asp-page="Cart" asp-route-productId="@Model.Id" class="btn btn-success btn-block">Add to Cart</a>*@
+    <div class="product-info">
+        <div class="product-category">
+            <span class="category-tag">Electronics</span>
+        </div>
 
-                <form asp-page-handler="AddToCart" method="post" name="addToCartForm" id="add_cart_form">
-                    <a href="javascript:;" onclick="parentNode.submit();" class="btn btn-success btn-block">Add to Cart</a>
+        <h5 class="product-title">
+            <a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="product-name-link">
+                @Model.Name
+            </a>
+        </h5>
+
+        <p class="product-description">
+            @(Model.Description?.Length > 60 ? Model.Description.Substring(0, 60) + "..." : Model.Description)
+        </p>
+
+        <div class="product-rating">
+            <div class="stars">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+            <span class="rating-text">(4.5) 125 reviews</span>
+        </div>
+
+        <div class="product-footer">
+            <div class="price-section">
+                <span class="current-price">$@Model.Price</span>
+                <span class="original-price">$@(Model.Price + 50)</span>
+                <span class="discount-badge">-20%</span>
+            </div>
+
+            <div class="product-actions-bottom">
+                <form asp-page-handler="AddToCart" method="post" class="add-cart-form">
+                    <button type="submit" class="btn btn-cart">
+                        <i class="fas fa-shopping-cart me-1"></i>
+                        Add to Cart
+                    </button>
                     <input type="hidden" asp-for="@Model.Id" name="productId" />
                 </form>
-
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.product-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.product-image-container {
+    position: relative;
+    overflow: hidden;
+    height: 250px;
+    background: #f8fafc;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.1);
+}
+
+.product-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.product-card:hover .product-overlay {
+    opacity: 1;
+}
+
+.product-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.action-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    color: var(--dark-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+.product-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 2;
+}
+
+.badge-new {
+    background: var(--success-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.product-info {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-category {
+    margin-bottom: 0.5rem;
+}
+
+.category-tag {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.product-title {
+    margin: 0.75rem 0 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.product-name-link {
+    color: var(--dark-color);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.product-name-link:hover {
+    color: var(--primary-color);
+}
+
+.product-description {
+    color: #6b7280;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    flex: 1;
+}
+
+.product-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.stars {
+    color: #fbbf24;
+    font-size: 0.9rem;
+}
+
+.rating-text {
+    color: #6b7280;
+    font-size: 0.8rem;
+}
+
+.product-footer {
+    margin-top: auto;
+}
+
+.price-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.current-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--danger-color);
+}
+
+.original-price {
+    font-size: 1rem;
+    color: #9ca3af;
+    text-decoration: line-through;
+}
+
+.discount-badge {
+    background: var(--danger-color);
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.add-cart-form {
+    width: 100%;
+}
+
+.btn-cart {
+    width: 100%;
+    background: var(--primary-gradient);
+    border: none;
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius-sm);
+    font-weight: 600;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-cart:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: white;
+}
+
+.btn-cart::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-cart:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .product-image-container {
+        height: 200px;
+    }
+
+    .product-info {
+        padding: 1rem;
+    }
+
+    .product-title {
+        font-size: 1rem;
+    }
+}
+</style>
