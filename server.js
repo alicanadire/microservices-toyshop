@@ -1997,23 +1997,27 @@ app.get("/api/products/:id", async (req, res) => {
 app.get("*", (req, res) => {
   const body = `
     <div class="main-container">
-        <div class="container py-5">
-            <div class="text-center">
-                <div class="mb-4" style="font-size: 8rem;">🔍</div>
-                <h1 class="display-4 fw-bold mb-3">Sayfa Bulunamadı</h1>
-                <p class="lead mb-4">Aradığınız sayfa mevcut değil veya taşınmış olabilir.</p>
-
-                <div class="alert alert-info border-0 rounded-3 mb-5">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-info-circle me-3 fa-2x"></i>
-                        <div class="text-start">
-                            <h5 class="mb-1">🚧 Geliştirme Modu</h5>
-                            <p class="mb-0">Bu sayfa henüz geliştirme modunda mevcut değil. ToyShop tam bir .NET mikroservis uygulamasıdır.</p>
-                        </div>
+        <div class="container py-4">
+            <!-- Backend Status Alert -->
+            <div id="backend-status" class="alert alert-warning d-none mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="spinner-border spinner-border-sm me-2" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
                     </div>
+                    <span>Backend servislerin durumu kontrol ediliyor...</span>
                 </div>
+            </div>
 
-                <div class="row g-3 justify-content-center mb-5">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="fw-bold">
+                        <i class="fas fa-toys me-2"></i>
+                        ${category ? "Kategori: " + category : "Tüm Oyuncaklar"}
+                        <span class="badge bg-primary">${filteredProducts.length}</span>
+                    </h2>
+                    <p class="text-muted">En kaliteli oyuncakları keşfedin</p>
+                </div>
+            </div>
                     <div class="col-auto">
                         <a href="/" class="btn btn-primary btn-lg">
                             <i class="fas fa-home me-2"></i>Ana Sayfa
