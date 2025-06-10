@@ -44,6 +44,82 @@ let backendAvailable = false;
   }
 })();
 
+// API routes must be defined before static files and catch-all route
+// Health check endpoint
+app.get("/api/health", async (req, res) => {
+  const services = {
+    frontend: true,
+    gateway: false,
+    catalog: false,
+    basket: false,
+    ordering: false,
+  };
+
+  try {
+    const fetch = require("node-fetch");
+
+    // Test Gateway
+    try {
+      const gatewayResponse = await fetch(`${BACKEND_SERVICES.GATEWAY_URL}`, {
+        timeout: 2000,
+      });
+      services.gateway = gatewayResponse.ok || gatewayResponse.status === 404; // 404 is ok for gateway
+    } catch (error) {
+      services.gateway = false;
+    }
+
+    // Test individual services if gateway is not available
+    if (!services.gateway) {
+      try {
+        const catalogResponse = await fetch(`${BACKEND_SERVICES.CATALOG_API}`, {
+          timeout: 2000,
+        });
+        services.catalog = catalogResponse.ok || catalogResponse.status === 404;
+      } catch (error) {
+        services.catalog = false;
+      }
+
+      try {
+        const basketResponse = await fetch(`${BACKEND_SERVICES.BASKET_API}`, {
+          timeout: 2000,
+        });
+        services.basket = basketResponse.ok || basketResponse.status === 404;
+      } catch (error) {
+        services.basket = false;
+      }
+
+      try {
+        const orderingResponse = await fetch(
+          `${BACKEND_SERVICES.ORDERING_API}`,
+          { timeout: 2000 },
+        );
+        services.ordering =
+          orderingResponse.ok || orderingResponse.status === 404;
+      } catch (error) {
+        services.ordering = false;
+      }
+    } else {
+      // If gateway is available, assume services are available through gateway
+      services.catalog = true;
+      services.basket = true;
+      services.ordering = true;
+    }
+  } catch (error) {
+    console.log("Health check error:", error.message);
+  }
+
+  const isHealthy =
+    services.gateway ||
+    (services.catalog && services.basket && services.ordering);
+
+  res.status(isHealthy ? 200 : 503).json({
+    status: isHealthy ? "healthy" : "degraded",
+    services: services,
+    timestamp: new Date().toISOString(),
+    mode: isHealthy ? "backend" : "mock",
+  });
+});
+
 // Serve static files from wwwroot
 app.use(
   "/css",
