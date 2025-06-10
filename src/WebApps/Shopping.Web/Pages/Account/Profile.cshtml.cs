@@ -8,7 +8,7 @@ namespace Shopping.Web.Pages.Account;
 [Authorize]
 public class ProfileModel : PageModel
 {
-    public UserViewModel User { get; set; } = default!;
+    public new UserViewModel User { get; set; } = default!;
 
     public void OnGet()
     {

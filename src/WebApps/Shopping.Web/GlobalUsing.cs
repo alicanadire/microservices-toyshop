@@ -6,9 +6,6 @@ global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Authentication.Cookies;
 global using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
-// Refit for HTTP clients
-global using Refit;
-
 // System namespaces
 global using System.Security.Claims;
 global using System.ComponentModel.DataAnnotations;
