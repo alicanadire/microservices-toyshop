@@ -149,13 +149,23 @@ services:
       - IdentityServerSettings__ApiName=gateway
       - IdentityServerSettings__RequireHttpsMetadata=false
     depends_on:
-      - identity.api
-      - catalog.api
-      - basket.api
-      - ordering.api
+      identity.api:
+        condition: service_healthy
+      catalog.api:
+        condition: service_started
+      basket.api:
+        condition: service_started
+      ordering.api:
+        condition: service_started
     ports:
       - "6064:8080"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
   shopping.web:
     container_name: shopping.web
@@ -170,11 +180,19 @@ services:
       - IdentityServerSettings__RequireHttpsMetadata=false
       - IdentityServerSettings__Scope=openid profile email roles catalog basket ordering shopping
     depends_on:
-      - identity.api
-      - yarpapigateway
+      identity.api:
+        condition: service_healthy
+      yarpapigateway:
+        condition: service_started
     ports:
       - "5000:8080"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
 volumes:
   mongodb_data:
