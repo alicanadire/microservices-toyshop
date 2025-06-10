@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Discount.Grpc.Models;
+
 namespace Discount.Grpc.Data;
 
 public class DiscountContext : DbContext
