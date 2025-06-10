@@ -1026,6 +1026,55 @@ app.get("/products", (req, res) => {
 
             // Grid/List view logic can be implemented here
         }
+
+        // Backend status checker
+        function checkBackendStatus() {
+            const statusAlert = document.getElementById('backend-status');
+            statusAlert.classList.remove('d-none');
+
+            fetch('/api/health')
+                .then(response => response.json())
+                .then(data => {
+                    statusAlert.classList.add('d-none');
+
+                    if (data.status === 'degraded') {
+                        const warningAlert = document.createElement('div');
+                        warningAlert.className = 'alert alert-warning d-flex align-items-center mb-4';
+                        warningAlert.innerHTML = \`
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <div>
+                                <strong>Mock Veri Modu:</strong> Backend servisler kullanılamıyor, demo verileri gösteriliyor.
+                                <br><small class="text-muted">Tam işlevsellik için .NET mikroservisleri başlatın.</small>
+                            </div>
+                        \`;
+                        statusAlert.parentNode.insertBefore(warningAlert, statusAlert.nextSibling);
+                    } else {
+                        const successAlert = document.createElement('div');
+                        successAlert.className = 'alert alert-success d-flex align-items-center mb-4';
+                        successAlert.innerHTML = \`
+                            <i class="fas fa-check-circle me-2"></i>
+                            <div>
+                                <strong>Backend Aktif:</strong> Canlı veriler backend servislerden alınıyor.
+                            </div>
+                        \`;
+                        statusAlert.parentNode.insertBefore(successAlert, statusAlert.nextSibling);
+
+                        // Auto-hide success message after 3 seconds
+                        setTimeout(() => {
+                            successAlert.style.transition = 'opacity 0.5s';
+                            successAlert.style.opacity = '0';
+                            setTimeout(() => successAlert.remove(), 500);
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    statusAlert.classList.add('d-none');
+                    console.error('Backend status check failed:', error);
+                });
+        }
+
+        // Check backend status on page load
+        document.addEventListener('DOMContentLoaded', checkBackendStatus);
     </script>`;
 
   res.send(renderTemplate("Oyuncaklar", body, req));
