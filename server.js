@@ -131,7 +131,7 @@ app.get("/api/status", (req, res) => {
       "Identity Service": {
         port: 6006,
         status: "configured",
-        tech: "IdentityServer + MongoDB + ASP.NET Core Identity",
+        tech: "IdentityServer + MongoDB + JWT Authentication",
       },
       "API Gateway": {
         port: 6064,
@@ -144,15 +144,19 @@ app.get("/api/status", (req, res) => {
         tech: "ASP.NET Core Razor Pages + OIDC",
       },
       "Catalog API": {
-        port: 8080,
+        port: 6000,
         status: "configured",
-        tech: "Carter + Marten",
+        tech: "Carter + Marten + PostgreSQL",
       },
-      "Basket API": { port: 8081, status: "configured", tech: "Redis + gRPC" },
-      "Ordering API": {
-        port: 8082,
+      "Basket API": {
+        port: 6001,
         status: "configured",
-        tech: "EF Core + CQRS",
+        tech: "Carter + Redis + gRPC + JWT Auth",
+      },
+      "Ordering API": {
+        port: 6003,
+        status: "configured",
+        tech: "Carter + EF Core + CQRS + JWT Auth",
       },
     },
     features: [
