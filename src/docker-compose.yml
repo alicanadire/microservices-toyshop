@@ -25,7 +25,7 @@ services:
       context: .
       dockerfile: Services/Identity/Identity.API/Dockerfile
     ports:
-      - "5000:8080"
+      - "5001:8080"
 
   catalog.api:
     image: ${DOCKER_REGISTRY-}catalogapi
@@ -65,7 +65,7 @@ services:
       context: .
       dockerfile: ApiGateways/YarpApiGateway/Dockerfile
     ports:
-      - "6004:8080"
+      - "6064:8080"
 
   shopping.web:
     image: ${DOCKER_REGISTRY-}shoppingweb
@@ -73,7 +73,7 @@ services:
       context: .
       dockerfile: WebApps/Shopping.Web/Dockerfile
     ports:
-      - "6005:8080"
+      - "5000:8080"
 
 volumes:
   postgres_catalog:

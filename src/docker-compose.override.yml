@@ -88,13 +88,13 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__MongoDb=mongodb://admin:password123@mongodb:27017/IdentityDb?authSource=admin
       - MongoDb__DatabaseName=IdentityDb
-      - IdentityServer__IssuerUri=http://localhost:5000
-      - IdentityServer__PublicOrigin=http://localhost:5000
+      - IdentityServer__IssuerUri=http://localhost:5001
+      - IdentityServer__PublicOrigin=http://localhost:5001
     depends_on:
       mongodb:
         condition: service_healthy
     ports:
-      - "5000:8080"
+      - "5001:8080"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
@@ -169,7 +169,7 @@ services:
       - basket.api
       - ordering.api
     ports:
-      - "6004:8080"
+      - "6064:8080"
     restart: unless-stopped
 
   shopping.web:
@@ -188,7 +188,7 @@ services:
       - identity.api
       - yarpapigateway
     ports:
-      - "6005:8080"
+      - "5000:8080"
     restart: unless-stopped
 
 volumes:
