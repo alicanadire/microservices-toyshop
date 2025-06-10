@@ -72,13 +72,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__MongoDb=mongodb://admin:password123@mongodb:27017/IdentityDb?authSource=admin
-      - MongoDb__DatabaseName=IdentityDb
       - IdentityServer__IssuerUri=http://localhost:6006
       - IdentityServer__PublicOrigin=http://localhost:6006
-    depends_on:
-      mongodb:
-        condition: service_healthy
     ports:
       - "6006:8080"
     restart: unless-stopped
