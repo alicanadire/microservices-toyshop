@@ -21,103 +21,413 @@ app.use(
   ),
 );
 
-// Mock data for development
+// Mock data for development - Toy Shop Products
 const mockProducts = [
   {
     id: 1,
-    name: "IPhone X",
-    category: "Electronics",
+    name: "LEGO Creator Expert 🏠",
+    category: "Building Sets",
     description:
-      "This phone is the company's biggest change to its flagship smartphone in years. It includes a borderless.",
-    imageFile: "product-1.png",
-    price: 950.0,
+      "Amazing building experience with this detailed Creator Expert set. Perfect for advanced builders and collectors.",
+    imageFile: "lego-house.jpg",
+    price: 89.99,
+    ageRange: "12+",
+    brand: "LEGO",
+    inStock: true,
+    rating: 4.8,
   },
   {
     id: 2,
-    name: "Samsung 10",
-    category: "Electronics",
+    name: "Barbie Dreamhouse 🏰",
+    category: "Dolls & Accessories",
     description:
-      "This phone is the company's biggest change to its flagship smartphone in years. It includes a borderless.",
-    imageFile: "product-2.png",
-    price: 840.0,
+      "Three-story dreamhouse with elevator, pool, and over 70 accessories. Perfect for imaginative play.",
+    imageFile: "barbie-dreamhouse.jpg",
+    price: 199.99,
+    ageRange: "3-9",
+    brand: "Barbie",
+    inStock: true,
+    rating: 4.7,
   },
   {
     id: 3,
-    name: "Huawei Plus",
-    category: "Electronics",
+    name: "Hot Wheels Track Set 🏎️",
+    category: "Vehicles & Tracks",
     description:
-      "This phone is the company's biggest change to its flagship smartphone in years. It includes a borderless.",
-    imageFile: "product-3.png",
-    price: 650.0,
+      "Epic racing track with loops, jumps, and speed boosters. Includes 5 die-cast cars.",
+    imageFile: "hotwheels-track.jpg",
+    price: 45.99,
+    ageRange: "4+",
+    brand: "Hot Wheels",
+    inStock: true,
+    rating: 4.6,
   },
   {
     id: 4,
-    name: "Xiaomi Mi 9",
-    category: "Electronics",
+    name: "Teddy Bear Collection 🧸",
+    category: "Plush Toys",
     description:
-      "This phone is the company's biggest change to its flagship smartphone in years. It includes a borderless.",
-    imageFile: "product-4.png",
-    price: 470.0,
+      "Soft and cuddly teddy bear made with premium materials. Perfect companion for bedtime.",
+    imageFile: "teddy-bear.jpg",
+    price: 24.99,
+    ageRange: "0+",
+    brand: "ToyShop",
+    inStock: true,
+    rating: 4.9,
+  },
+  {
+    id: 5,
+    name: "Nintendo Switch Console 🎮",
+    category: "Electronic Toys",
+    description:
+      "Portable gaming console with vibrant OLED screen. Perfect for gaming on the go.",
+    imageFile: "nintendo-switch.jpg",
+    price: 299.99,
+    ageRange: "6+",
+    brand: "Nintendo",
+    inStock: true,
+    rating: 4.8,
+  },
+  {
+    id: 6,
+    name: "Educational Tablet 📱",
+    category: "Educational Toys",
+    description:
+      "Interactive learning tablet with games, stories, and educational activities.",
+    imageFile: "kids-tablet.jpg",
+    price: 79.99,
+    ageRange: "3-8",
+    brand: "LeapFrog",
+    inStock: true,
+    rating: 4.5,
+  },
+  {
+    id: 7,
+    name: "Art & Craft Set 🎨",
+    category: "Arts & Crafts",
+    description:
+      "Complete art set with crayons, markers, colored pencils, and drawing paper.",
+    imageFile: "art-set.jpg",
+    price: 34.99,
+    ageRange: "5+",
+    brand: "Crayola",
+    inStock: true,
+    rating: 4.7,
+  },
+  {
+    id: 8,
+    name: "Remote Control Drone 🚁",
+    category: "Remote Control",
+    description:
+      "Easy-to-fly drone with HD camera and LED lights. Perfect for outdoor adventures.",
+    imageFile: "rc-drone.jpg",
+    price: 129.99,
+    ageRange: "8+",
+    brand: "TechToys",
+    inStock: true,
+    rating: 4.4,
   },
 ];
 
 // Utility function to render basic HTML template
 function renderTemplate(title, body, req) {
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${title} - EShop Microservices</title>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
-    <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <title>${title} - ToyShop 🧸</title>
+    <link href="//cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFE66D;
+            --purple-color: #A8E6CF;
+            --pink-color: #FFB3BA;
+            --blue-color: #BFEFFF;
+            --text-dark: #2C3E50;
+            --text-light: #7F8C8D;
+        }
+
+        * {
+            font-family: 'Nunito', sans-serif !important;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)) !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-brand {
+            font-weight: 800 !important;
+            font-size: 1.8rem !important;
+            background: linear-gradient(45deg, #fff, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            font-weight: 600 !important;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            color: var(--accent-color) !important;
+        }
+
+        .nav-link.active {
+            color: var(--accent-color) !important;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        .main-container {
+            background: white;
+            border-radius: 20px;
+            margin-top: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .card {
+            border: none !important;
+            border-radius: 20px !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+        }
+
+        .card-header {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)) !important;
+            border: none !important;
+            color: white !important;
+            font-weight: 700 !important;
+            padding: 1.5rem !important;
+        }
+
+        .btn {
+            border-radius: 15px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease;
+            border: none !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)) !important;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, var(--secondary-color), var(--purple-color)) !important;
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, var(--accent-color), #FFA726) !important;
+            color: var(--text-dark) !important;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .carousel-item {
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .product-card .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent-color) !important;
+            color: var(--text-dark) !important;
+            font-weight: 700;
+        }
+
+        .price-tag {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--blue-color), var(--pink-color));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .rating {
+            color: #FFC107;
+        }
+
+        footer {
+            background: linear-gradient(45deg, var(--text-dark), #34495E) !important;
+            color: white;
+            margin-top: 4rem;
+            padding: 3rem 0;
+        }
+
+        .search-box {
+            border-radius: 25px !important;
+            border: none !important;
+            background: rgba(255,255,255,0.9) !important;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-btn {
+            border-radius: 0 25px 25px 0 !important;
+            background: var(--accent-color) !important;
+            color: var(--text-dark) !important;
+            border: none !important;
+        }
+
+        .cart-btn {
+            background: linear-gradient(45deg, var(--secondary-color), var(--purple-color)) !important;
+            border-radius: 25px !important;
+            font-weight: 700 !important;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .category-badge {
+            background: var(--purple-color) !important;
+            color: var(--text-dark) !important;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            80% { transform: translateY(-5px); }
+        }
+
+        .bounce-animation {
+            animation: bounce 2s infinite;
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="/">EShop Microservices</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault">
+                <a class="navbar-brand bounce-animation" href="/">
+                    <i class="fas fa-rocket me-2"></i>ToyShop 🧸
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
-                    <ul class="navbar-nav m-auto">
-                        <li class="nav-item ${req.path === "/" ? "active" : ""}">
-                            <a class="nav-link" href="/">Home</a>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link ${req.path === "/" ? "active" : ""}" href="/">
+                                <i class="fas fa-home me-1"></i>Ana Sayfa
+                            </a>
                         </li>
-                        <li class="nav-item ${req.path === "/products" ? "active" : ""}">
-                            <a class="nav-link" href="/products">Products</a>
+                        <li class="nav-item">
+                            <a class="nav-link ${req.path === "/products" ? "active" : ""}" href="/products">
+                                <i class="fas fa-toys me-1"></i>Oyuncaklar
+                            </a>
                         </li>
-                        <li class="nav-item ${req.path === "/cart" ? "active" : ""}">
-                            <a class="nav-link" href="/cart">Cart</a>
+                        <li class="nav-item">
+                            <a class="nav-link ${req.path === "/cart" ? "active" : ""}" href="/cart">
+                                <i class="fas fa-shopping-cart me-1"></i>Sepet
+                            </a>
                         </li>
-                        <li class="nav-item ${req.path === "/orders" ? "active" : ""}">
-                            <a class="nav-link" href="/orders">Orders</a>
+                        <li class="nav-item">
+                            <a class="nav-link ${req.path === "/orders" ? "active" : ""}" href="/orders">
+                                <i class="fas fa-list-alt me-1"></i>Siparişler
+                            </a>
                         </li>
-                        <li class="nav-item ${req.path === "/contact" ? "active" : ""}">
-                            <a class="nav-link" href="/contact">Contact</a>
+                        <li class="nav-item">
+                            <a class="nav-link ${req.path === "/contact" ? "active" : ""}" href="/contact">
+                                <i class="fas fa-envelope me-1"></i>İletişim
+                            </a>
                         </li>
                     </ul>
-                    <form class="form-inline my-2 my-lg-0">
-                        <div class="input-group input-group-sm">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-secondary btn-number">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </div>
+                    <form class="d-flex align-items-center">
+                        <div class="input-group me-3">
+                            <input type="text" class="form-control search-box" placeholder="Oyuncak ara..." style="width: 200px;">
+                            <button class="btn search-btn" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
                         </div>
-                        <a class="btn btn-success btn-sm ml-3" href="/cart">
-                            <i class="fa fa-shopping-cart"></i> Cart
-                            <span class="badge badge-light">0</span>
+                        <a class="btn cart-btn text-white" href="/cart">
+                            <i class="fas fa-shopping-cart me-1"></i>Sepet
+                            <span class="badge bg-warning text-dark ms-1">0</span>
                         </a>
                     </form>
                 </div>
             </div>
         </nav>
     </header>
+    <div style="height: 80px;"></div> <!-- Spacer for fixed navbar -->
     <div class="container">
         <main role="main" class="pb-3">
             ${body}
@@ -125,43 +435,54 @@ function renderTemplate(title, body, req) {
     </div>
     <footer class="text-light">
         <div class="container">
-            <div class="row">
-                <div class="col-md-3 col-lg-4 col-xl-3">
-                    <h5>About</h5>
-                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
-                    <p class="mb-0">EShop Microservices - A modern e-commerce platform built with .NET 8 microservices architecture.</p>
+            <div class="row g-4">
+                <div class="col-md-3 col-lg-4">
+                    <h5><i class="fas fa-rocket me-2"></i>ToyShop Hakkında</h5>
+                    <hr class="bg-white mb-3 mt-0 d-inline-block w-25">
+                    <p class="mb-0">En kaliteli ve eğlenceli oyuncakları çocukların hayal gücüyle buluşturan modern oyuncak mağazası. .NET 8 mikroservis mimarisiyle güçlendirilmiştir.</p>
+                    <div class="mt-3">
+                        <a href="#" class="text-light me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-youtube fa-lg"></i></a>
+                    </div>
                 </div>
-                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto">
-                    <h5>Information</h5>
-                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
+                <div class="col-md-2 col-lg-2 mx-auto">
+                    <h5><i class="fas fa-info-circle me-2"></i>Bilgiler</h5>
+                    <hr class="bg-white mb-3 mt-0 d-inline-block w-25">
                     <ul class="list-unstyled">
-                        <li><a href="/about">About Us</a></li>
-                        <li><a href="/privacy">Privacy Policy</a></li>
-                        <li><a href="/terms">Terms of Service</a></li>
-                        <li><a href="/support">Support</a></li>
+                        <li class="mb-2"><a href="/about" class="text-light text-decoration-none">Hakkımızda</a></li>
+                        <li class="mb-2"><a href="/privacy" class="text-light text-decoration-none">Gizlilik Politikası</a></li>
+                        <li class="mb-2"><a href="/terms" class="text-light text-decoration-none">Kullanım Şartları</a></li>
+                        <li class="mb-2"><a href="/support" class="text-light text-decoration-none">Destek</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto">
-                    <h5>Quick Links</h5>
-                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
+                <div class="col-md-3 col-lg-2 mx-auto">
+                    <h5><i class="fas fa-toys me-2"></i>Kategoriler</h5>
+                    <hr class="bg-white mb-3 mt-0 d-inline-block w-25">
                     <ul class="list-unstyled">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/products">Products</a></li>
-                        <li><a href="/cart">Cart</a></li>
-                        <li><a href="/orders">Orders</a></li>
+                        <li class="mb-2"><a href="/products?category=building" class="text-light text-decoration-none">Yapı Setleri</a></li>
+                        <li class="mb-2"><a href="/products?category=dolls" class="text-light text-decoration-none">Bebekler</a></li>
+                        <li class="mb-2"><a href="/products?category=vehicles" class="text-light text-decoration-none">Araçlar</a></li>
+                        <li class="mb-2"><a href="/products?category=educational" class="text-light text-decoration-none">Eğitici Oyuncaklar</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4 col-lg-3 col-xl-3">
-                    <h5>Contact</h5>
-                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
+                <div class="col-md-4 col-lg-3">
+                    <h5><i class="fas fa-phone me-2"></i>İletişim</h5>
+                    <hr class="bg-white mb-3 mt-0 d-inline-block w-25">
                     <ul class="list-unstyled">
-                        <li><i class="fa fa-home mr-2"></i> EShop Company</li>
-                        <li><i class="fa fa-envelope mr-2"></i> contact@eshop.com</li>
-                        <li><i class="fa fa-phone mr-2"></i> +1 234 567 8900</li>
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> ToyShop Merkez</li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@toyshop.com</li>
+                        <li class="mb-2"><i class="fas fa-phone me-2"></i> +90 212 123 45 67</li>
+                        <li class="mb-2"><i class="fas fa-clock me-2"></i> Pazartesi-Cumartesi: 09:00-22:00</li>
                     </ul>
                 </div>
-                <div class="col-12 copyright mt-3">
-                    <p class="text-right text-muted">EShop Microservices | Development Mode</p>
+                <div class="col-12 text-center mt-4 pt-4 border-top">
+                    <p class="mb-0">
+                        <i class="fas fa-heart text-danger me-1"></i>
+                        2024 ToyShop - Çocukların Hayal Dünyası | Geliştirme Modu
+                        <i class="fas fa-rocket ms-1"></i>
+                    </p>
                 </div>
             </div>
         </div>
@@ -206,20 +527,40 @@ function renderTemplate(title, body, req) {
 
 // Product card component
 function renderProductCard(product) {
-  return `<div class="card">
-        <div class="card-body">
-            <h4 class="card-title">
-                <a href="/products/${product.id}" title="View Product">${product.name}</a>
-            </h4>
-            <h5>$${product.price.toFixed(2)}</h5>
-            <p class="card-text">${product.description}</p>
-            <div class="row">
-                <div class="col-sm">
-                    <a href="/products/${product.id}" class="btn btn-light btn-block">View Details</a>
-                </div>
-                <div class="col-sm">
-                    <button class="btn btn-success btn-block" onclick="addToCart(${product.id})">Add to Cart</button>
-                </div>
+  const emoji = product.name.match(/[🏠🏰🏎️🧸🎮📱🎨🚁]/)?.[0] || "🧸";
+  const stars =
+    "★".repeat(Math.floor(product.rating)) +
+    "☆".repeat(5 - Math.floor(product.rating));
+
+  return `<div class="product-card fade-in">
+        <span class="badge">${product.ageRange}</span>
+        <div class="product-image">
+            ${emoji}
+        </div>
+        <div class="text-center">
+            <span class="category-badge">${product.category}</span>
+            <h5 class="mt-3 mb-2 fw-bold">${product.name}</h5>
+            <div class="rating mb-2">
+                ${stars} <small class="text-muted">(${product.rating})</small>
+            </div>
+            <p class="text-muted small mb-3">${product.description}</p>
+            <div class="price-tag mb-3">₺${(product.price * 30).toFixed(2)}</div>
+            <div class="d-grid gap-2">
+                <a href="/products/${product.id}" class="btn btn-warning">
+                    <i class="fas fa-eye me-1"></i>Detayları Gör
+                </a>
+                <button class="btn btn-success" onclick="addToCart(${product.id})">
+                    <i class="fas fa-cart-plus me-1"></i>Sepete Ekle
+                </button>
+            </div>
+            <div class="mt-2">
+                <small class="text-success">
+                    <i class="fas fa-check-circle me-1"></i>Stokta Var
+                </small>
+                <br>
+                <small class="text-info">
+                    <i class="fas fa-truck me-1"></i>Ücretsiz Kargo
+                </small>
             </div>
         </div>
     </div>`;
@@ -227,48 +568,71 @@ function renderProductCard(product) {
 
 // Routes
 app.get("/", (req, res) => {
-  const lastProducts = mockProducts.slice(0, 4);
-  const bestProducts = mockProducts.slice(-4);
+  const featuredProducts = mockProducts.slice(0, 4);
+  const popularProducts = mockProducts.slice(2, 6);
+  const newProducts = mockProducts.slice(4, 8);
 
-  const body = `<hr />
-        <div class="container">
-            <div class="row">
-                <div class="col-8">
-                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                        <ol class="carousel-indicators">
-                            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-                        </ol>
+  const body = `
+    <div class="main-container">
+        <div class="hero-gradient fade-in">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="fas fa-rocket me-3"></i>
+                ToyShop'a Hoş Geldiniz! 🎉
+            </h1>
+            <p class="lead mb-4">Çocukların hayal gücünü geliştiren en kaliteli oyuncaklar burada!</p>
+            <a href="/products" class="btn btn-warning btn-lg">
+                <i class="fas fa-toys me-2"></i>Oyuncakları Keşfet
+            </a>
+        </div>
+
+        <div class="container py-5">
+            <!-- Hero Carousel -->
+            <div class="row mb-5">
+                <div class="col-lg-8">
+                    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+                            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+                            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+                        </div>
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <div style="height: 300px; background: linear-gradient(45deg, #007bff, #6610f2); display: flex; align-items: center; justify-content: center; color: white;">
-                                    <h2>Welcome to EShop Microservices</h2>
+                                <div style="height: 350px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); display: flex; align-items: center; justify-content: center; color: white; border-radius: 20px;">
+                                    <div class="text-center">
+                                        <h2 class="fw-bold mb-3">🎯 Yeni LEGO Setleri</h2>
+                                        <p class="lead">Hayal gücünü sınırsızca geliştir!</p>
+                                    </div>
                                 </div>
                             </div>
                             <div class="carousel-item">
-                                <div style="height: 300px; background: linear-gradient(45deg, #28a745, #20c997); display: flex; align-items: center; justify-content: center; color: white;">
-                                    <h2>Latest Technology Products</h2>
+                                <div style="height: 350px; background: linear-gradient(135deg, var(--accent-color), var(--pink-color)); display: flex; align-items: center; justify-content: center; color: var(--text-dark); border-radius: 20px;">
+                                    <div class="text-center">
+                                        <h2 class="fw-bold mb-3">🎮 Gaming Dünyası</h2>
+                                        <p class="lead">En popüler oyun konsolları!</p>
+                                    </div>
                                 </div>
                             </div>
                             <div class="carousel-item">
-                                <div style="height: 300px; background: linear-gradient(45deg, #dc3545, #fd7e14); display: flex; align-items: center; justify-content: center; color: white;">
-                                    <h2>Best Deals Available</h2>
+                                <div style="height: 350px; background: linear-gradient(135deg, var(--purple-color), var(--blue-color)); display: flex; align-items: center; justify-content: center; color: var(--text-dark); border-radius: 20px;">
+                                    <div class="text-center">
+                                        <h2 class="fw-bold mb-3">🧸 Sevimli Peluşlar</h2>
+                                        <p class="lead">En yumuşak dostlar!</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon"></span>
-                        </a>
-                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
                             <span class="carousel-control-next-icon"></span>
-                        </a>
+                        </button>
                     </div>
                 </div>
-                <div class="col-4">
-                    <div class="card">
-                        <div class="card-header bg-success text-white">
-                            <h5><i class="fa fa-star"></i> Featured Product</h5>
+                <div class="col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5><i class="fas fa-star me-2"></i>Öne Çıkan Ürün</h5>
                         </div>
                         <div class="card-body">
                             ${renderProductCard(mockProducts[0])}
@@ -276,49 +640,145 @@ app.get("/", (req, res) => {
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="container mt-3">
-            <div class="row">
-                <div class="col-sm">
+            <!-- Category Quick Access -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <h3 class="text-center mb-4 fw-bold">
+                        <i class="fas fa-list me-2"></i>Kategoriler
+                    </h3>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <div class="mb-3" style="font-size: 3rem;">🏗️</div>
+                                    <h6 class="fw-bold">Yapı Setleri</h6>
+                                    <a href="/products?category=building" class="btn btn-sm btn-outline-primary">Görüntüle</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <div class="mb-3" style="font-size: 3rem;">👸</div>
+                                    <h6 class="fw-bold">Bebekler</h6>
+                                    <a href="/products?category=dolls" class="btn btn-sm btn-outline-primary">Görüntüle</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <div class="mb-3" style="font-size: 3rem;">🚗</div>
+                                    <h6 class="fw-bold">Araçlar</h6>
+                                    <a href="/products?category=vehicles" class="btn btn-sm btn-outline-primary">Görüntüle</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <div class="mb-3" style="font-size: 3rem;">🎓</div>
+                                    <h6 class="fw-bold">Eğitici</h6>
+                                    <a href="/products?category=educational" class="btn btn-sm btn-outline-primary">Görüntüle</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Products -->
+            <div class="row mb-5">
+                <div class="col-12">
                     <div class="card">
-                        <div class="card-header bg-primary text-white text-uppercase">
-                            <i class="fa fa-star"></i> Latest Products
+                        <div class="card-header">
+                            <h4><i class="fas fa-fire me-2"></i>Popüler Oyuncaklar</h4>
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                ${lastProducts.map((product) => `<div class="col-md-3 mb-3">${renderProductCard(product)}</div>`).join("")}
+                            <div class="row g-4">
+                                ${featuredProducts.map((product) => `<div class="col-lg-3 col-md-6">${renderProductCard(product)}</div>`).join("")}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Arrivals -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-sparkles me-2"></i>Yeni Gelenler</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-4">
+                                ${newProducts.map((product) => `<div class="col-lg-3 col-md-6">${renderProductCard(product)}</div>`).join("")}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits Section -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row text-center g-4">
+                                <div class="col-md-3">
+                                    <div class="mb-3" style="font-size: 2.5rem; color: var(--primary-color);">
+                                        <i class="fas fa-shipping-fast"></i>
+                                    </div>
+                                    <h5 class="fw-bold">Ücretsiz Kargo</h5>
+                                    <p class="text-muted">500₺ üzeri siparişlerde</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3" style="font-size: 2.5rem; color: var(--secondary-color);">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <h5 class="fw-bold">Güvenli Alışveriş</h5>
+                                    <p class="text-muted">SSL sertifikalı ödeme</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3" style="font-size: 2.5rem; color: var(--accent-color);">
+                                        <i class="fas fa-undo"></i>
+                                    </div>
+                                    <h5 class="fw-bold">Kolay İade</h5>
+                                    <p class="text-muted">14 gün içinde</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3" style="font-size: 2.5rem; color: var(--purple-color);">
+                                        <i class="fas fa-headset"></i>
+                                    </div>
+                                    <h5 class="fw-bold">7/24 Destek</h5>
+                                    <p class="text-muted">Müşteri hizmetleri</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="container mt-3 mb-4">
-            <div class="row">
-                <div class="col-sm">
-                    <div class="card">
-                        <div class="card-header bg-primary text-white text-uppercase">
-                            <i class="fa fa-trophy"></i> Best Products
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                ${bestProducts.map((product) => `<div class="col-md-3 mb-3">${renderProductCard(product)}</div>`).join("")}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <script>
-            function addToCart(productId) {
-                alert('Product added to cart! (Mock functionality)');
-            }
-        </script>`;
+    <script>
+        function addToCart(productId) {
+            // Modern notification with SweetAlert style
+            const product = ${JSON.stringify(mockProducts)}.find(p => p.id === productId);
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-success position-fixed';
+            notification.style.cssText = 'top: 100px; right: 20px; z-index: 9999; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);';
+            notification.innerHTML = \`
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>\${product.name}</strong> sepete eklendi!
+            \`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>`;
 
-  res.send(renderTemplate("Home", body, req));
+  res.send(renderTemplate("Ana Sayfa", body, req));
 });
 
 app.get("/products", (req, res) => {
@@ -361,7 +821,7 @@ app.get("/products/:id", (req, res) => {
                     <h4 class="text-success">$${product.price.toFixed(2)}</h4>
                     <p class="lead">${product.description}</p>
                     <p><strong>Category:</strong> ${product.category}</p>
-                    
+
                     <div class="form-group">
                         <label for="quantity">Quantity:</label>
                         <div class="input-group">
@@ -378,7 +838,7 @@ app.get("/products/:id", (req, res) => {
                             </div>
                         </div>
                     </div>
-                    
+
                     <button class="btn btn-success btn-lg" onclick="addToCart(${product.id})">
                         <i class="fa fa-shopping-cart"></i> Add to Cart
                     </button>
@@ -402,7 +862,7 @@ app.get("/cart", (req, res) => {
   const body = `<div class="container mt-3">
             <h2>Shopping Cart</h2>
             <div class="alert alert-info">
-                <i class="fa fa-info-circle"></i> This is a development preview. 
+                <i class="fa fa-info-circle"></i> This is a development preview.
                 The cart functionality requires the backend microservices to be running.
             </div>
             <div class="row">
@@ -440,7 +900,7 @@ app.get("/orders", (req, res) => {
   const body = `<div class="container mt-3">
             <h2>Order History</h2>
             <div class="alert alert-info">
-                <i class="fa fa-info-circle"></i> This is a development preview. 
+                <i class="fa fa-info-circle"></i> This is a development preview.
                 Order functionality requires the backend microservices to be running.
             </div>
             <div class="card">
@@ -501,13 +961,13 @@ app.get("/contact", (req, res) => {
                             <p><i class="fa fa-home"></i> <strong>Address:</strong><br>
                             123 EShop Street<br>
                             Tech City, TC 12345</p>
-                            
+
                             <p><i class="fa fa-phone"></i> <strong>Phone:</strong><br>
                             +1 (234) 567-8900</p>
-                            
+
                             <p><i class="fa fa-envelope"></i> <strong>Email:</strong><br>
                             contact@eshop.com</p>
-                            
+
                             <p><i class="fa fa-clock-o"></i> <strong>Business Hours:</strong><br>
                             Mon-Fri: 9:00 AM - 6:00 PM<br>
                             Sat-Sun: 10:00 AM - 4:00 PM</p>
@@ -542,7 +1002,7 @@ app.get("*", (req, res) => {
             <div class="alert alert-warning">
                 <h4><i class="fa fa-exclamation-triangle"></i> Development Mode</h4>
                 <p>This page is not yet implemented in development mode.</p>
-                <p><strong>Note:</strong> This is a .NET microservices application. 
+                <p><strong>Note:</strong> This is a .NET microservices application.
                 To run the full application, you need:</p>
                 <ul>
                     <li>.NET 8 SDK</li>
