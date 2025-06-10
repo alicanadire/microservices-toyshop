@@ -923,6 +923,56 @@ app.get("/", (req, res) => {
             document.body.appendChild(notification);
             setTimeout(() => notification.remove(), 3000);
         }
+
+        // Backend status checker for homepage
+        function checkBackendStatus() {
+            const statusAlert = document.getElementById('backend-status');
+            statusAlert.classList.remove('d-none');
+
+            fetch('/api/health')
+                .then(response => response.json())
+                .then(data => {
+                    statusAlert.classList.add('d-none');
+
+                    if (data.status === 'degraded') {
+                        const warningAlert = document.createElement('div');
+                        warningAlert.className = 'alert alert-warning d-flex align-items-center m-3';
+                        warningAlert.innerHTML = \`
+                            <i class="fas fa-info-circle me-2"></i>
+                            <div>
+                                <strong>Demo Modu:</strong> Şu anda demo verileri gösterilmektedir.
+                                <a href="/products" class="alert-link">Ürünleri görüntüleyin</a> veya
+                                <a href="javascript:void(0)" onclick="window.open('/api/health', '_blank')" class="alert-link">sistem durumunu kontrol edin</a>.
+                            </div>
+                        \`;
+                        statusAlert.parentNode.insertBefore(warningAlert, statusAlert.nextSibling);
+                    } else {
+                        const successAlert = document.createElement('div');
+                        successAlert.className = 'alert alert-success d-flex align-items-center m-3';
+                        successAlert.innerHTML = \`
+                            <i class="fas fa-check-circle me-2"></i>
+                            <div>
+                                <strong>Sistem Aktif:</strong> Tüm backend servisleri çalışıyor!
+                            </div>
+                        \`;
+                        statusAlert.parentNode.insertBefore(successAlert, statusAlert.nextSibling);
+
+                        // Auto-hide success message
+                        setTimeout(() => {
+                            successAlert.style.transition = 'opacity 0.5s';
+                            successAlert.style.opacity = '0';
+                            setTimeout(() => successAlert.remove(), 500);
+                        }, 4000);
+                    }
+                })
+                .catch(error => {
+                    statusAlert.classList.add('d-none');
+                    console.error('Backend status check failed:', error);
+                });
+        }
+
+        // Check backend status on page load
+        document.addEventListener('DOMContentLoaded', checkBackendStatus);
     </script>`;
 
   res.send(renderTemplate("Ana Sayfa", body, req));
