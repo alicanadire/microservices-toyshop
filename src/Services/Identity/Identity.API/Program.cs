@@ -67,8 +67,6 @@ try
         mongo =>
         {
             mongo.ConnectionString = mongoConnectionString;
-            mongo.UsersCollection = "users";
-            mongo.RolesCollection = "roles";
         }
     );
 
