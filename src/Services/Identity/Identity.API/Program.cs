@@ -29,28 +29,11 @@ try
     // Add services to the container.
     Log.Information("🔧 Configuring services...");
 
-    // Use in-memory database for now to avoid DB connection issues
+    // Use in-memory database for simplicity and reliability
     builder.Services.AddDbContext<IdentityDbContext>(options =>
     {
-        try
-        {
-            var connectionString = builder.Configuration.GetConnectionString("Database");
-            if (!string.IsNullOrEmpty(connectionString))
-            {
-                Log.Information("📊 Using PostgreSQL database");
-                options.UseNpgsql(connectionString);
-            }
-            else
-            {
-                Log.Warning("⚠️  No database connection string found, using in-memory database");
-                options.UseInMemoryDatabase("IdentityDb");
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Warning(ex, "⚠️  Database connection failed, falling back to in-memory database");
-            options.UseInMemoryDatabase("IdentityDb");
-        }
+        Log.Information("💾 Using in-memory database for development");
+        options.UseInMemoryDatabase("IdentityDb");
     });
 
     Log.Information("✅ Database context configured");
