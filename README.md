@@ -1,16 +1,16 @@
-# EShop Microservices - Development Preview
+# 🧸 ToyShop - Modern Oyuncak Mağazası
 
-This repository contains a .NET 8 microservices-based e-commerce application. The development environment has been configured to provide a frontend preview using Node.js while the actual application is designed to run with .NET and Docker.
+Bu proje .NET 8 mikroservis mimarisi ile geliştirilmiş modern bir oyuncak e-ticaret platformudur. Geliştirme ortamı Node.js ile frontend önizlemesi sağlarken, gerçek uygulama .NET ve Docker ile çalışacak şekilde tasarlanmı��tır.
 
-## 🚀 Quick Start (Development Preview)
+## 🚀 Hızlı Başlangıç (Geliştirme Önizlemesi)
 
-The development server is now running and serving a preview of the e-commerce frontend:
+Geliştirme sunucusu çalışıyor ve oyuncak mağazasının modern arayüzünü sunuyor:
 
-- **Homepage**: http://localhost:3000/
-- **Products**: http://localhost:3000/products
-- **Cart**: http://localhost:3000/cart
-- **Orders**: http://localhost:3000/orders
-- **Contact**: http://localhost:3000/contact
+- **Ana Sayfa**: http://localhost:3000/ - Oyuncak kategorileri ve öne çıkan ürünler
+- **Oyuncaklar**: http://localhost:3000/products - Tüm oyuncak kataloğu
+- **Sepet**: http://localhost:3000/cart - Alışveriş sepeti
+- **Siparişler**: http://localhost:3000/orders - Sipariş geçmişi
+- **İletişim**: http://localhost:3000/contact - Müşteri desteği
 
 ## 📁 Project Structure
 
@@ -34,20 +34,20 @@ eshop-microservices/
 
 ### What's Working:
 
-✅ Frontend preview with mock data  
-✅ Responsive design with Bootstrap 4  
-✅ Navigation between pages  
-✅ Product listing and details  
-✅ Contact form (UI only)  
+✅ Frontend preview with mock data
+✅ Responsive design with Bootstrap 4
+✅ Navigation between pages
+✅ Product listing and details
+✅ Contact form (UI only)
 ✅ API endpoints for testing
 
 ### What's Not Available (Requires Full Setup):
 
-❌ Backend microservices  
-❌ Database functionality  
-❌ Authentication/Authorization  
-❌ Real cart and checkout  
-❌ Order processing  
+❌ Backend microservices
+❌ Database functionality
+❌ Authentication/Authorization
+❌ Real cart and checkout
+❌ Order processing
 ❌ Payment integration
 
 ## 🔧 Development Commands
