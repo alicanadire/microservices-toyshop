@@ -5,11 +5,14 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();
 
-Log.Information("Starting Identity Service - API Only");
+Log.Information("🔑 Starting Identity Service - MUST WORK!");
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    // Ensure we listen on all interfaces
+    builder.WebHost.UseUrls("http://+:8080");
 
     builder.Host.UseSerilog((context, configuration) =>
         configuration.ReadFrom.Configuration(context.Configuration));
@@ -91,9 +94,26 @@ try
     app.UseIdentityServer();
     app.UseAuthorization();
 
-    // Simple health check endpoint
-    app.MapGet("/", () => "Identity Service API - Running");
-    app.MapGet("/health", () => "Healthy");
+    // Health check and debug endpoints
+    app.MapGet("/", () => Results.Ok(new {
+        service = "Identity Service API",
+        status = "Running",
+        timestamp = DateTime.UtcNow,
+        version = "2.0.0-fixed",
+        issuer = app.Configuration["IdentityServer:IssuerUri"]
+    }));
+
+    app.MapGet("/health", () => Results.Ok(new {
+        status = "Healthy",
+        timestamp = DateTime.UtcNow
+    }));
+
+    app.MapGet("/debug/config", () => Results.Ok(new {
+        Authority = app.Configuration["IdentityServer:IssuerUri"],
+        Environment = app.Environment.EnvironmentName,
+        ConnectionString = app.Configuration.GetConnectionString("Database")?.Substring(0, 50) + "...",
+        Clients = IdentityServerConfig.Clients.Select(c => new { c.ClientId, c.ClientName }).ToList()
+    }));
 
     app.Run();
 }
