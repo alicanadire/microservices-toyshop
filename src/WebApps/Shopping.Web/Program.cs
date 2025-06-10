@@ -36,6 +36,7 @@ builder.Services.AddAuthentication(options =>
     options.SaveTokens = true;
     options.GetClaimsFromUserInfoEndpoint = true;
     options.RequireHttpsMetadata = bool.Parse(identityServerSettings["RequireHttpsMetadata"] ?? "false");
+    options.UsePkce = true;
 
     options.Scope.Clear();
     var scopes = identityServerSettings["Scope"]?.Split(' ') ?? Array.Empty<string>();
@@ -45,8 +46,29 @@ builder.Services.AddAuthentication(options =>
     }
 
     options.ClaimActions.MapJsonKey("role", "role", "role");
+    options.ClaimActions.MapJsonKey("email", "email", "email");
+    options.ClaimActions.MapJsonKey("given_name", "given_name", "given_name");
+    options.ClaimActions.MapJsonKey("family_name", "family_name", "family_name");
+
     options.TokenValidationParameters.NameClaimType = "name";
     options.TokenValidationParameters.RoleClaimType = "role";
+
+    // Enhanced error handling
+    options.Events = new OpenIdConnectEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            context.HandleResponse();
+            context.Response.Redirect("/Error");
+            return Task.CompletedTask;
+        },
+        OnAccessDenied = context =>
+        {
+            context.HandleResponse();
+            context.Response.Redirect("/Account/AccessDenied");
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddAuthorization();
