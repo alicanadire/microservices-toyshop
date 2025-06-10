@@ -1,5 +1,4 @@
 global using Microsoft.AspNetCore.Identity;
-global using Microsoft.EntityFrameworkCore;
 global using Duende.IdentityServer;
 global using Duende.IdentityServer.Models;
 global using Duende.IdentityServer.Services;
@@ -7,4 +6,6 @@ global using System.Security.Claims;
 global using Identity.API.Data;
 global using Identity.API.Models;
 global using Identity.API.Services;
-global using Npgsql;
+global using MongoDB.Driver;
+global using AspNetCore.Identity.MongoDbCore.Models;
+global using AspNetCore.Identity.MongoDbCore.Extensions;
