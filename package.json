@@ -1,0 +1,33 @@
+{
+  "name": "toyshop-microservices",
+  "version": "1.0.0",
+  "description": "ToyShop - Modern Oyuncak Mağazası (.NET 8 Mikroservisler)",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "echo 'Build script for .NET: dotnet build src/eshop-microservices.sln'",
+    "restore": "echo 'Restore script for .NET: dotnet restore src/eshop-microservices.sln'",
+    "docker-up": "echo 'Docker up script: cd src && docker-compose up -d'",
+    "docker-down": "echo 'Docker down script: cd src && docker-compose down'"
+  },
+  "keywords": [
+    "dotnet",
+    "microservices",
+    "ecommerce",
+    "toyshop",
+    "oyuncak",
+    "toys",
+    "children",
+    "cocuk"
+  ],
+  "author": "ToyShop Development Team",
+  "license": "MIT",
+  "devDependencies": {
+    "express": "^4.18.2",
+    "path": "^0.12.7"
+  },
+  "dependencies": {
+    "http-proxy-middleware": "^3.0.5",
+    "node-fetch": "^2.7.0"
+  }
+}

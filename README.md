@@ -1,97 +1,177 @@
-**UDEMY COURSE WITH DISCOUNTED - Step by Step Development of this Repository -> https://www.udemy.com/course/microservices-architecture-and-implementation-on-dotnet/?couponCode=MAYY25**
+# 🧸 ToyShop - Modern Oyuncak Mağazası
 
-See the overall picture of **implementations on microservices with .net tools** on real-world **e-commerce microservices** project;
+Bu proje .NET 8 mikroservis mimarisi ile geliştirilmiş modern bir oyuncak e-ticaret platformudur. Geliştirme ortamı Node.js ile frontend önizlemesi sağlarken, gerçek uygulama .NET ve Docker ile çalışacak şekilde tasarlanmıştır.
 
-![microservices](https://github.com/aspnetrun/run-aspnetcore-microservices/assets/1147445/efe5e688-67f2-4ddd-af37-d9d3658aede4)
+## 🚀 Hızlı Başlangıç
 
-There is a couple of microservices which implemented **e-commerce** modules over **Catalog, Basket, Discount** and **Ordering** microservices with **NoSQL (DocumentDb, Redis)** and **Relational databases (PostgreSQL, Sql Server)** with communicating over **RabbitMQ Event Driven Communication** and using **Yarp API Gateway**.
+### 1. Frontend (Geliştirme Önizlemesi) ✅ ÇALIŞIYOR
 
-### Check Explanation of this Repository on Medium
-* [.NET 8 Microservices: DDD, CQRS, Vertical/Clean Architecture and Event-Driven Communication](https://medium.com/@mehmetozkaya/net-8-microservices-ddd-cqrs-vertical-clean-architecture-2dd7ebaaf4bd)
-
-## Whats Including In This Repository
-We have implemented below **features over the run-aspnetcore-microservices repository**.
-
-#### Catalog microservice which includes; 
-* ASP.NET Core Minimal APIs and latest features of .NET8 and C# 12
-* **Vertical Slice Architecture** implementation with Feature folders and single .cs file includes different classes in one file
-* CQRS implementation using MediatR library
-* CQRS Validation Pipeline Behaviors with MediatR and FluentValidation
-* Use Marten library for .NET Transactional Document DB on PostgreSQL
-* Use Carter for Minimal API endpoint definition
-* Cross-cutting concerns Logging, Global Exception Handling and Health Checks
-
-#### Basket microservice which includes;
-* ASP.NET 8 Web API application, Following REST API principles, CRUD
-* Using **Redis** as a **Distributed Cache** over basketdb
-* Implements Proxy, Decorator and Cache-aside patterns
-* Consume Discount **Grpc Service** for inter-service sync communication to calculate product final price
-* Publish BasketCheckout Queue with using **MassTransit and RabbitMQ**
-  
-#### Discount microservice which includes;
-* ASP.NET **Grpc Server** application
-* Build a Highly Performant **inter-service gRPC Communication** with Basket Microservice
-* Exposing Grpc Services with creating **Protobuf messages**
-* Entity Framework Core ORM — SQLite Data Provider and Migrations to simplify data access and ensure high performance
-* **SQLite database** connection and containerization
-
-#### Microservices Communication
-* Sync inter-service **gRPC Communication**
-* Async Microservices Communication with **RabbitMQ Message-Broker Service**
-* Using **RabbitMQ Publish/Subscribe Topic** Exchange Model
-* Using **MassTransit** for abstraction over RabbitMQ Message-Broker system
-* Publishing BasketCheckout event queue from Basket microservices and Subscribing this event from Ordering microservices	
-* Create **RabbitMQ EventBus.Messages library** and add references Microservices
-
-#### Ordering Microservice
-* Implementing **DDD, CQRS, and Clean Architecture** with using Best Practices
-* Developing **CQRS with using MediatR, FluentValidation and Mapster packages**
-* Consuming **RabbitMQ** BasketCheckout event queue with using **MassTransit-RabbitMQ** Configuration
-* **SqlServer database** connection and containerization
-* Using **Entity Framework Core ORM** and auto migrate to SqlServer when application startup
-	
-#### Yarp API Gateway Microservice
-* Develop API Gateways with **Yarp Reverse Proxy** applying Gateway Routing Pattern
-* Yarp Reverse Proxy Configuration; Route, Cluster, Path, Transform, Destinations
-* **Rate Limiting** with FixedWindowLimiter on Yarp Reverse Proxy Configuration
-
-#### WebUI ShoppingApp Microservice
-* ASP.NET Core Web Application with Bootstrap 4 and Razor template
-* Call **Yarp APIs with Refit HttpClientFactory**
-
-#### Docker Compose establishment with all microservices on docker;
-* Containerization of microservices
-* Containerization of databases
-* Override Environment variables
-
-## Run The Project
-You will need the following tools:
-
-* [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)
-* [.Net Core 8 or later](https://dotnet.microsoft.com/download/dotnet-core/8)
-* [Docker Desktop](https://www.docker.com/products/docker-desktop)
-
-### Installing
-Follow these steps to get your development environment set up: (Before Run Start the Docker Desktop)
-1. Clone the repository
-2. Once Docker for Windows is installed, go to the **Settings > Advanced option**, from the Docker icon in the system tray, to configure the minimum amount of memory and CPU like so:
-* **Memory: 4 GB**
-* CPU: 2
-3. At the root directory of solution, select **docker-compose** and **Set a startup project**. **Run docker-compose without debugging on visual studio**.
-  Or you can go to root directory which include **docker-compose.yml** files, run below command:
-```csharp
-docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+```bash
+npm install
+npm run dev
+# http://localhost:3000 adresinde açılır
 ```
 
-4. Wait for docker compose all microservices. That’s it! (some microservices need extra time to work so please wait if not worked in first shut)
+**Mevcut URL'ler:**
 
-5. Launch **Shopping Web UI -> https://localhost:6065** in your browser to view index page. You can use Web project in order to **call microservices over Yarp API Gateway**. When you **checkout the basket** you can follow **queue record on RabbitMQ dashboard**.
+- **Ana Sayfa**: http://localhost:3000/ - Oyuncak kategorileri ve öne çıkan ürünler
+- **Oyuncaklar**: http://localhost:3000/products - Tüm oyuncak kataloğu
+- **Sepet**: http://localhost:3000/cart - Alışveriş sepeti
+- **Siparişler**: http://localhost:3000/orders - Sipariş geçmişi
+- **İletişim**: http://localhost:3000/contact - Müşteri desteği
+- **Health Check**: http://localhost:3000/api/health - Sistem durumu
 
-![mainscreen2](https://user-images.githubusercontent.com/1147445/81381837-08226000-9116-11ea-9489-82645b8dbfc4.png)
+### 2. Backend (.NET Mikroservisler) ⚠️ KURULUM GEREKLİ
 
-## Authors
+#### Otomatik Kurulum (Önerilen)
 
-* **Mehmet Ozkaya** - *Initial work* - [mehmetozkaya](https://github.com/mehmetozkaya)
+```bash
+# Linux/Mac
+./start-backend.sh
 
-See also the list of [contributors](https://github.com/aspnetrun/run-core/contributors) who participated in this project. Check also [gihtub page of repository.](https://aspnetrun.github.io/run-aspnetcore-angular-realworld/)
+# Windows
+./start-backend.ps1
+```
 
+#### Manuel Docker Kurulumu
+
+```bash
+cd src
+docker-compose up -d
+```
+
+#### Manuel .NET Kurulumu
+
+```bash
+# Her servisi ayrı terminal'de çalıştırın:
+cd src/Services/Catalog/Catalog.API && dotnet run        # Port 6000
+cd src/Services/Basket/Basket.API && dotnet run         # Port 6001
+cd src/Services/Discount/Discount.Grpc && dotnet run    # Port 6002
+cd src/Services/Ordering/Ordering.API && dotnet run     # Port 6003
+cd src/ApiGateways/YarpApiGateway && dotnet run         # Port 6004
+cd src/WebApps/Shopping.Web && dotnet run               # Port 6005
+```
+
+## 📊 Sistem Durumu
+
+| Servis Türü            | URL                              | Durum              | Açıklama                |
+| ---------------------- | -------------------------------- | ------------------ | ----------------------- |
+| **Frontend (Node.js)** | http://localhost:3000            | ✅ Aktif           | Mock data ile çalışıyor |
+| **Health Check**       | http://localhost:3000/api/health | ✅ Aktif           | Sistem durumu           |
+| **Backend Gateway**    | https://localhost:6064           | ⚠️ Kurulum Gerekli | .NET API Gateway        |
+| **Shopping Web**       | https://localhost:6065           | ⚠️ Kurulum Gerekli | .NET Web Uygulaması     |
+| **Catalog API**        | http://localhost:6000            | ⚠️ Kurulum Gerekli | Ürün kataloğu           |
+| **Basket API**         | http://localhost:6001            | ⚠️ Kurulum Gerekli | Sepet yönetimi          |
+| **Discount gRPC**      | http://localhost:6002            | ⚠️ Kurulum Gerekli | İndirim servisi         |
+| **Ordering API**       | http://localhost:6003            | ⚠️ Kurulum Gerekli | Sipariş yönetimi        |
+
+## 🔧 Sorun Giderme
+
+### API Çağrıları Çalışmıyor?
+
+1. **Frontend Mock Modu** (Şu anki durum):
+
+   - ✅ Mock veriler kullanılıyor
+   - ✅ Frontend çalışıyor
+   - ⚠️ Backend servisleri kullanılamıyor
+
+2. **Backend Kurulum Kontrolü**:
+
+   ```bash
+   # Sistem durumunu kontrol et
+   curl http://localhost:3000/api/health
+
+   # .NET SDK kontrolü
+   dotnet --version
+
+   # Docker kontrolü
+   docker --version
+   ```
+
+3. **Detaylı Çözüm Kılavuzu**: `API_SORUN_COZUM_KILAVUZU.md` dosyasına bakın
+
+### Hızlı Reset
+
+```bash
+# Backend'i durdur
+./stop-backend.sh
+
+# Yeniden başlat
+./start-backend.sh
+```
+
+## 📁 Proje Yapısı
+
+```
+toyshop-microservices/
+├── 🌐 Frontend (Node.js)
+│   ├── package.json                        # Node.js geliştirme kurulumu
+│   ├── server.js                          # Geliştirme sunucusu
+│   └── API_SORUN_COZUM_KILAVUZU.md       # Sorun giderme kılavuzu
+├── 🔧 Kurulum Scriptleri
+│   ├── start-backend.sh/.ps1             # Backend başlatma
+│   └── stop-backend.sh                    # Backend durdurma
+└── 🏗️ Backend (.NET)
+    ├── src/
+    │   ├── ApiGateways/YarpApiGateway/    # API Gateway (YARP)
+    │   ├── BuildingBlocks/                # Paylaşılan kütüphaneler
+    │   ├── Services/
+    │   │   ├── Basket/Basket.API/        # Sepet Servisi
+    │   │   ├── Catalog/Catalog.API/      # Ürün Kataloğu Servisi
+    │   │   ├── Discount/Discount.Grpc/   # İndirim Servisi (gRPC)
+    │   │   └── Ordering/                 # Sipariş Yönetimi Servisi
+    │   └── WebApps/Shopping.Web/         # .NET Web Uygulaması
+    └── docker-compose.yml                # Docker kurulumu
+```
+
+## 🎯 Özellikler
+
+### Şu Anda Aktif (Frontend)
+
+- ✅ Modern oyuncak mağazası arayüzü
+- ✅ 8 farklı oyuncak kategorisi
+- ✅ Türkçe dil desteği
+- ✅ Responsive tasarım
+- ✅ Mock veri API'leri
+- ✅ Sistem durum kontrolü
+
+### Hedeflenen (Backend)
+
+- 🎯 .NET 8 mikroservis mimarisi
+- 🎯 Docker containerization
+- 🎯 PostgreSQL, Redis, SQL Server veritabanları
+- 🎯 RabbitMQ mesaj kuyruğu
+- 🎯 CQRS, DDD, Event-Driven patterns
+- 🎯 API Gateway (YARP)
+- 🎯 gRPC iletişimi
+
+## 🛠️ Gereksinimler
+
+### Frontend İçin
+
+- Node.js 16+
+- npm veya yarn
+
+### Backend İçin
+
+- .NET 8 SDK
+- Docker & Docker Compose
+- Git
+
+## 📚 Dokümantasyon
+
+- `API_SORUN_COZUM_KILAVUZU.md` - API sorunları çözüm kılavuzu
+- `PROJE_DETAYLI_DOKUMANTASYON.md` - Detaylı teknik dokümantasyon
+- `CALISTIRMA_KILAVUZU.md` - Kurulum ve çalıştırma kılavuzu
+
+## 📞 Destek
+
+Sorun yaşıyorsanız:
+
+1. `API_SORUN_COZUM_KILAVUZU.md` dosyasını kontrol edin
+2. Health check endpoint'ini test edin: http://localhost:3000/api/health
+3. Backend servislerinin çalışıp çalışmadığını kontrol edin
+
+## 🎉 Çocukların Oyuncak Dünyasına Hoş Geldiniz!
+
+Bu proje, çocuklar için güvenli ve eğlenceli alışveriş deneyimi sunan modern bir oyuncak mağazasıdır. LEGO'dan Barbie'ye, Hot Wheels'den eğitici oyuncaklara kadar geniş ürün yelpazesi ile çocukların hayal gücünü destekler.

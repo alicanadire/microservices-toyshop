@@ -6,6 +6,7 @@ namespace Shopping.Web.Pages
     {
         public IEnumerable<string> CategoryList { get; set; } = [];
         public IEnumerable<ProductModel> ProductList { get; set; } = [];
+        public string? CategoryName { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public string SelectedCategory { get; set; } = default!;
@@ -15,6 +16,7 @@ namespace Shopping.Web.Pages
             var response = await catalogService.GetProducts();
 
             CategoryList = response.Products.SelectMany(p => p.Category).Distinct();
+            CategoryName = categoryName;
 
             if (!string.IsNullOrWhiteSpace(categoryName))
             {

@@ -1,24 +1,152 @@
-﻿@model Models.Catalog.ProductModel
+@model Shopping.Web.Models.Catalog.ProductModel
 
-<div class="card">
-    <a asp-page="ProductDetail" asp-route-productId="@Model.Id"><img asp-append-version="true" class="card-img-top" src="~/images/product/@Model.ImageFile" alt=""></a>
-    <div class="card-body">
-        <h4 class="card-title"><a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="color-main">@Model.Name</a></h4>
-        <p class="card-text">@Model.Description</p>
-        <div class="row">
-            <div class="col">
-                <p class="btn btn-danger btn-block">@Model.Price $</p>
+@{
+    var emoji = Model.Name switch
+    {
+        var name when name.Contains("LEGO") => "🏗️",
+        var name when name.Contains("Barbie") => "🏰",
+        var name when name.Contains("Hot Wheels") => "🏎️",
+        var name when name.Contains("Ayıcık") => "🧸",
+        var name when name.Contains("Nintendo") => "🎮",
+        var name when name.Contains("Tablet") => "📱",
+        var name when name.Contains("Sanat") => "🎨",
+        var name when name.Contains("Drone") => "🚁",
+        _ => "🧸"
+    };
+    
+    var categoryBadge = Model.Category?.FirstOrDefault() ?? "Oyuncak";
+    var ageRange = Model.Name switch
+    {
+        var name when name.Contains("LEGO") => "8+",
+        var name when name.Contains("Barbie") => "3-12",
+        var name when name.Contains("Hot Wheels") => "3+",
+        var name when name.Contains("Ayıcık") => "0+",
+        var name when name.Contains("Nintendo") => "6+",
+        var name when name.Contains("Tablet") => "3-8",
+        var name when name.Contains("Sanat") => "5+",
+        var name when name.Contains("Drone") => "8+",
+        _ => "3+"
+    };
+}
+
+<div class="product-card mb-4" style="
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+">
+    <span class="badge position-absolute top-0 end-0 m-3" style="
+        background: var(--accent-color, #FFE66D) !important;
+        color: var(--text-dark, #2C3E50) !important;
+        font-weight: 700;
+    ">@ageRange</span>
+    
+    <div class="product-image text-center mb-3" style="
+        width: 100%;
+        height: 150px;
+        background: linear-gradient(135deg, #BFEFFF, #FFB3BA);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+    ">
+        @emoji
+    </div>
+    
+    <div class="text-center flex-grow-1 d-flex flex-column">
+        <span class="badge mb-3" style="
+            background: var(--purple-color, #A8E6CF) !important;
+            color: var(--text-dark, #2C3E50) !important;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            width: fit-content;
+            margin: 0 auto;
+        ">@categoryBadge</span>
+        
+        <h5 class="mb-2 fw-bold">@Model.Name</h5>
+        
+        <div class="rating mb-2" style="color: #FFC107;">
+            ★★★★★ <small class="text-muted">(4.8)</small>
+        </div>
+        
+        <p class="text-muted small mb-3 flex-grow-1">@Model.Description</p>
+        
+        <div class="price-tag mb-3" style="
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color, #FF6B6B);
+        ">₺@((Model.Price * 30).ToString("F2"))</div>
+        
+        <div class="mt-auto">
+            <div class="d-grid gap-2">
+                <a asp-page="/ProductDetail" asp-route-productId="@Model.Id" class="btn btn-warning">
+                    <i class="fas fa-eye me-1"></i>Detayları Gör
+                </a>
+                <button class="btn btn-success" onclick="addToCart('@Model.Id')">
+                    <i class="fas fa-cart-plus me-1"></i>Sepete Ekle
+                </button>
             </div>
-            <div class="col">
-
-                @*<a asp-page="Cart" asp-route-productId="@Model.Id" class="btn btn-success btn-block">Add to Cart</a>*@
-
-                <form asp-page-handler="AddToCart" method="post" name="addToCartForm" id="add_cart_form">
-                    <a href="javascript:;" onclick="parentNode.submit();" class="btn btn-success btn-block">Add to Cart</a>
-                    <input type="hidden" asp-for="@Model.Id" name="productId" />
-                </form>
-
+            
+            <div class="mt-2">
+                <small class="text-success">
+                    <i class="fas fa-check-circle me-1"></i>Stokta Var
+                </small>
+                <br>
+                <small class="text-info">
+                    <i class="fas fa-truck me-1"></i>Ücretsiz Kargo
+                </small>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function addToCart(productId) {
+        // Modern notification
+        const notification = document.createElement('div');
+        notification.className = 'alert alert-success position-fixed';
+        notification.style.cssText = 'top: 100px; right: 20px; z-index: 9999; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);';
+        notification.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            <strong>@Model.Name</strong> sepete eklendi!
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+</script>
+
+<style>
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+    }
+    
+    .btn {
+        border-radius: 15px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease;
+        border: none !important;
+    }
+    
+    .btn-warning {
+        background: linear-gradient(45deg, #FFE66D, #FFA726) !important;
+        color: #2C3E50 !important;
+    }
+    
+    .btn-success {
+        background: linear-gradient(45deg, #4ECDC4, #A8E6CF) !important;
+    }
+    
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+</style>

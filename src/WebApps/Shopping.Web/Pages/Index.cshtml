@@ -1,59 +1,205 @@
-﻿@page
+@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Ana Sayfa";
 }
 
-<hr />
+<div class="hero-gradient text-white text-center py-5 mb-5" style="
+    background: linear-gradient(135deg, #FF6B6B, #4ECDC4, #FFE66D);
+    border-radius: 20px;
+">
+    <h1 class="display-4 fw-bold mb-3">
+        <i class="fas fa-rocket me-3"></i>
+        ToyShop'a Hoş Geldiniz! 🎉
+    </h1>
+    <p class="lead mb-4">Çocukların hayal gücünü geliştiren en kaliteli oyuncaklar burada!</p>
+    <a asp-page="/ProductList" class="btn btn-warning btn-lg">
+        <i class="fas fa-toys me-2"></i>Oyuncakları Keşfet
+    </a>
+</div>
 
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                <ol class="carousel-indicators">
-                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-                </ol>
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img class="d-block w-100" src="~/images/banner/banner1.png" alt="First slide">
-                    </div>
-                    <div class="carousel-item">
-                        <img class="d-block w-100" src="~/images/banner/banner2.png" alt="Second slide">
-                    </div>
-                    <div class="carousel-item">
-                        <img class="d-block w-100" src="~/images/banner/banner3.png" alt="Second slide">
+<div class="row mb-5">
+    <div class="col-lg-8">
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div style="height: 350px; background: linear-gradient(135deg, #FF6B6B, #4ECDC4); display: flex; align-items: center; justify-content: center; color: white; border-radius: 20px;">
+                        <div class="text-center">
+                            <h2 class="fw-bold mb-3">🎯 Yeni LEGO Setleri</h2>
+                            <p class="lead">Hayal gücünü sınırsızca geliştir!</p>
+                        </div>
                     </div>
                 </div>
-                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                    <span class="sr-only">Next</span>
-                </a>
+                <div class="carousel-item">
+                    <div style="height: 350px; background: linear-gradient(135deg, #FFE66D, #FFB3BA); display: flex; align-items: center; justify-content: center; color: #2C3E50; border-radius: 20px;">
+                        <div class="text-center">
+                            <h2 class="fw-bold mb-3">🎮 Gaming Dünyası</h2>
+                            <p class="lead">En popüler oyun konsolları!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div style="height: 350px; background: linear-gradient(135deg, #A8E6CF, #BFEFFF); display: flex; align-items: center; justify-content: center; color: #2C3E50; border-radius: 20px;">
+                        <div class="text-center">
+                            <h2 class="fw-bold mb-3">🧸 Sevimli Peluşlar</h2>
+                            <p class="lead">En yumuşak dostlar!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header text-white" style="background: linear-gradient(45deg, #FF6B6B, #4ECDC4) !important;">
+                <h5><i class="fas fa-star me-2"></i>Öne Çıkan Ürün</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.ProductList.Any())
+                {
+                    <partial name="_TopProductPartial" model="Model.ProductList.FirstOrDefault()" />
+                }
             </div>
         </div>
-
-        <partial name="_TopProductPartial" model="Model.ProductList.FirstOrDefault()" />
-
     </div>
 </div>
 
-<div class="container mt-3">
-    <div class="row">
-        <div class="col-sm">
+<!-- Category Quick Access -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h3 class="text-center mb-4 fw-bold">
+            <i class="fas fa-list me-2"></i>Kategoriler
+        </h3>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3" style="font-size: 3rem;">🏗️</div>
+                        <h6 class="fw-bold">Yapı Setleri</h6>
+                        <a asp-page="/ProductList" class="btn btn-sm btn-outline-primary">Görüntüle</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3" style="font-size: 3rem;">👸</div>
+                        <h6 class="fw-bold">Bebekler</h6>
+                        <a asp-page="/ProductList" class="btn btn-sm btn-outline-primary">Görüntüle</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3" style="font-size: 3rem;">🚗</div>
+                        <h6 class="fw-bold">Araçlar</h6>
+                        <a asp-page="/ProductList" class="btn btn-sm btn-outline-primary">Görüntüle</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3" style="font-size: 3rem;">🎓</div>
+                        <h6 class="fw-bold">Eğitici</h6>
+                        <a asp-page="/ProductList" class="btn btn-sm btn-outline-primary">Görüntüle</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Latest Products -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header text-white" style="background: linear-gradient(45deg, #FF6B6B, #4ECDC4) !important;">
+                <h4><i class="fas fa-fire me-2"></i>Popüler Oyuncaklar</h4>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    @foreach (var product in Model.ProductList.Take(4))
+                    {
+                        <div class="col-lg-3 col-md-6">
+                            <partial name="_ProductItemPartial" model="@product" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Best Products -->
+@if (Model.ProductList.Count() > 4)
+{
+    <div class="row mb-5">
+        <div class="col-12">
             <div class="card">
-                <div class="card-header bg-primary text-white text-uppercase">
-                    <i class="fa fa-star"></i> Last products
+                <div class="card-header text-white" style="background: linear-gradient(45deg, #FF6B6B, #4ECDC4) !important;">
+                    <h4><i class="fas fa-trophy me-2"></i>En İyi Oyuncaklar</h4>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-
-                        @foreach (var product in Model.ProductList.Take(4))
+                    <div class="row g-4">
+                        @foreach (var product in Model.ProductList.Skip(4).Take(4))
                         {
-                            <div class="col-sm">
+                            <div class="col-lg-3 col-md-6">
                                 <partial name="_ProductItemPartial" model="@product" />
                             </div>
                         }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
+<!-- Benefits Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row text-center g-4">
+                    <div class="col-md-3">
+                        <div class="mb-3" style="font-size: 2.5rem; color: #FF6B6B;">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <h5 class="fw-bold">Ücretsiz Kargo</h5>
+                        <p class="text-muted">500₺ üzeri siparişlerde</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3" style="font-size: 2.5rem; color: #4ECDC4;">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h5 class="fw-bold">Güvenli Alışveriş</h5>
+                        <p class="text-muted">SSL sertifikalı ödeme</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3" style="font-size: 2.5rem; color: #FFE66D;">
+                            <i class="fas fa-undo"></i>
+                        </div>
+                        <h5 class="fw-bold">Kolay İade</h5>
+                        <p class="text-muted">14 gün içinde</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3" style="font-size: 2.5rem; color: #A8E6CF;">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h5 class="fw-bold">7/24 Destek</h5>
+                        <p class="text-muted">Müşteri hizmetleri</p>
                     </div>
                 </div>
             </div>
@@ -61,26 +207,33 @@
     </div>
 </div>
 
-<div class="container mt-3 mb-4">
-    <div class="row">
-        <div class="col-sm">
-            <div class="card">
-                <div class="card-header bg-primary text-white text-uppercase">
-                    <i class="fa fa-trophy"></i> Best products
-                </div>
-                <div class="card-body">
-                    <div class="row">
-
-                        @foreach (var product in Model.ProductList.TakeLast(4))
-                        {
-                            <div class="col-sm">
-                                <partial name="_ProductItemPartial" model="@product" />
-                            </div>
-                        }
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<style>
+    .card-header {
+        border: none !important;
+        color: white !important;
+        font-weight: 700 !important;
+        padding: 1.5rem !important;
+    }
+    
+    .btn {
+        border-radius: 15px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease;
+        border: none !important;
+    }
+    
+    .btn-warning {
+        background: linear-gradient(45deg, #FFE66D, #FFA726) !important;
+        color: #2C3E50 !important;
+    }
+    
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    .carousel-item {
+        border-radius: 20px;
+        overflow: hidden;
+    }
+</style>
