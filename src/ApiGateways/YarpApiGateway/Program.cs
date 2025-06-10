@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Threading.RateLimiting;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
@@ -68,7 +70,7 @@ try
         {
             policy.WithOrigins(
                     "http://localhost:5000",      // Shopping Web
-                    "http://localhost:6006",      // Identity Server
+                    "http://localhost:6006",      // Identity Server  
                     "http://shopping.web:8080",   // Shopping Web container
                     "http://identity.api:8080"    // Identity container
                   )
@@ -197,86 +199,50 @@ try
     app.UseAuthorization();
     app.UseRateLimiter();
 
-    // Custom middleware for request logging
-    app.Use(async (context, next) =>
+    // Health check endpoints
+    app.MapHealthChecks("/health", new HealthCheckOptions
     {
-        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
-        Log.Information("🌐 API Gateway Request: {Method} {Path} from {IP}",
-            context.Request.Method,
-            context.Request.Path,
-            context.Connection.RemoteIpAddress);
-
-        await next();
-
-        stopwatch.Stop();
-
-        Log.Information("✅ API Gateway Response: {Method} {Path} -> {StatusCode} in {ElapsedMs}ms",
-            context.Request.Method,
-            context.Request.Path,
-            context.Response.StatusCode,
-            stopwatch.ElapsedMilliseconds);
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
     });
 
-    // API Gateway info endpoint
+    app.MapHealthChecks("/health/ready", new HealthCheckOptions
+    {
+        Predicate = check => check.Tags.Contains("ready"),
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
+
+    app.MapHealthChecks("/health/live", new HealthCheckOptions
+    {
+        Predicate = _ => false,
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
+
+    // Debug and monitoring endpoints
     app.MapGet("/", () => Results.Ok(new
     {
-        service = "EShop API Gateway",
-        version = "1.0.0",
+        service = "API Gateway",
         status = "Running",
         timestamp = DateTime.UtcNow,
+        version = "2.0.0",
         environment = app.Environment.EnvironmentName,
-        features = new[]
+        authentication = "JWT Bearer",
+        proxy = "YARP"
+    })).AllowAnonymous();
+
+    app.MapGet("/debug/routes", () => Results.Ok(new
+    {
+        routes = new[]
         {
-            "YARP Reverse Proxy",
-            "JWT Authentication",
-            "Rate Limiting",
-            "Health Checks",
-            "CORS Support",
-            "Request Logging"
-        },
-        routes = new
-        {
-            catalog = "/catalog-service/*",
-            basket = "/basket-service/*",
-            ordering = "/ordering-service/*"
+            "/catalog-service/** → Catalog API",
+            "/basket-service/** → Basket API (Auth Required)",
+            "/ordering-service/** → Ordering API (Auth Required)",
+            "/admin/catalog-service/** → Catalog API (Admin Only)"
         }
     })).AllowAnonymous();
 
-    // Health check endpoint
-    app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+    app.MapGet("/debug/policies", () => Results.Ok(new
     {
-        ResponseWriter = async (context, report) =>
-        {
-            context.Response.ContentType = "application/json";
-            var response = new
-            {
-                status = report.Status.ToString(),
-                timestamp = DateTime.UtcNow,
-                duration = report.TotalDuration.TotalMilliseconds,
-                checks = report.Entries.Select(x => new
-                {
-                    name = x.Key,
-                    status = x.Value.Status.ToString(),
-                    duration = x.Value.Duration.TotalMilliseconds,
-                    description = x.Value.Description
-                })
-            };
-            await context.Response.WriteAsJsonAsync(response);
-        }
-    }).AllowAnonymous();
-
-    // Debug endpoint for development
-    app.MapGet("/debug/routes", () => Results.Ok(new
-    {
-        availableRoutes = new[]
-        {
-            new { path = "/catalog-service/**", target = "http://catalog.api:8080", auth = "None" },
-            new { path = "/basket-service/**", target = "http://basket.api:8080", auth = "Required" },
-            new { path = "/ordering-service/**", target = "http://ordering.api:8080", auth = "Required" }
-        },
-        identityServer = app.Configuration["IdentityServerSettings:Authority"],
-        rateLimits = new
+        rateLimiting = new
         {
             general = "100 requests/minute",
             authenticated = "200 requests/minute",
@@ -297,20 +263,22 @@ try
                 correlationId, context.Request.Method, context.Request.Path);
 
             await next();
+
+            Log.Debug("✅ Proxy response {CorrelationId}: {StatusCode}",
+                correlationId, context.Response.StatusCode);
         });
     });
 
     Log.Information("🚀 API Gateway starting...");
-    Log.Information("🌐 API Gateway will be available at: http://localhost:6064");
-    Log.Information("🏥 Health checks: http://localhost:6064/health");
+    Log.Information("🌐 Available at: http://localhost:6064");
+    Log.Information("🏥 Health check: http://localhost:6064/health");
     Log.Information("🔍 Debug routes: http://localhost:6064/debug/routes");
-    Log.Information("📊 Gateway info: http://localhost:6064/");
 
     app.Run();
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "API Gateway failed to start");
+    Log.Fatal(ex, "API Gateway terminated unexpectedly");
 }
 finally
 {
