@@ -1,21 +1,4 @@
 services:
-  mongodb:
-    container_name: mongodb
-    restart: always
-    ports:
-      - "27017:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=password123
-      - MONGO_INITDB_DATABASE=IdentityDb
-    volumes:
-      - mongodb_data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   catalogdb:
     container_name: catalogdb
     environment:
@@ -173,6 +156,5 @@ services:
     restart: unless-stopped
 
 volumes:
-  mongodb_data:
   postgres_catalog:
   postgres_basket:
