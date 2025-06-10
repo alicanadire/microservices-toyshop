@@ -1797,23 +1797,82 @@ app.get("/api/products/:id", (req, res) => {
 
 // Development notice for other routes
 app.get("*", (req, res) => {
-  const body = `<div class="container mt-3">
-            <div class="alert alert-warning">
-                <h4><i class="fa fa-exclamation-triangle"></i> Development Mode</h4>
-                <p>This page is not yet implemented in development mode.</p>
-                <p><strong>Note:</strong> This is a .NET microservices application.
-                To run the full application, you need:</p>
-                <ul>
-                    <li>.NET 8 SDK</li>
-                    <li>Docker & Docker Compose</li>
-                    <li>SQL Server, PostgreSQL, Redis, and RabbitMQ</li>
-                </ul>
-                <p>For development setup, please refer to the PowerShell setup script: <code>setup.ps1</code></p>
-                <a href="/" class="btn btn-primary">Go to Home</a>
-            </div>
-        </div>`;
+  const body = `
+    <div class="main-container">
+        <div class="container py-5">
+            <div class="text-center">
+                <div class="mb-4" style="font-size: 8rem;">🔍</div>
+                <h1 class="display-4 fw-bold mb-3">Sayfa Bulunamadı</h1>
+                <p class="lead mb-4">Aradığınız sayfa mevcut değil veya taşınmış olabilir.</p>
 
-  res.send(renderTemplate("Page Not Found", body, req));
+                <div class="alert alert-info border-0 rounded-3 mb-5">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-info-circle me-3 fa-2x"></i>
+                        <div class="text-start">
+                            <h5 class="mb-1">🚧 Geliştirme Modu</h5>
+                            <p class="mb-0">Bu sayfa henüz geliştirme modunda mevcut değil. ToyShop tam bir .NET mikroservis uygulamasıdır.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 justify-content-center mb-5">
+                    <div class="col-auto">
+                        <a href="/" class="btn btn-primary btn-lg">
+                            <i class="fas fa-home me-2"></i>Ana Sayfa
+                        </a>
+                    </div>
+                    <div class="col-auto">
+                        <a href="/products" class="btn btn-success btn-lg">
+                            <i class="fas fa-toys me-2"></i>Oyuncaklar
+                        </a>
+                    </div>
+                    <div class="col-auto">
+                        <a href="/contact" class="btn btn-info btn-lg">
+                            <i class="fas fa-envelope me-2"></i>İletişim
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-cogs me-2"></i>Tam Uygulama İçin Gereksinimler</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-3 text-center">
+                                <i class="fas fa-code fa-2x text-primary mb-2"></i>
+                                <h6>.NET 8 SDK</h6>
+                                <small class="text-muted">Backend mikroservisler</small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <i class="fas fa-docker fa-2x text-info mb-2"></i>
+                                <h6>Docker & Compose</h6>
+                                <small class="text-muted">Konteyner yönetimi</small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <i class="fas fa-database fa-2x text-success mb-2"></i>
+                                <h6>Veritabanları</h6>
+                                <small class="text-muted">PostgreSQL, SQL Server, Redis</small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <i class="fas fa-exchange-alt fa-2x text-warning mb-2"></i>
+                                <h6>RabbitMQ</h6>
+                                <small class="text-muted">Mesaj kuyruğu</small>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-terminal me-2"></i>
+                                Tam kurulum için: <code>setup.ps1</code> dosyasını çalıştırın
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+  res.send(renderTemplate("Sayfa Bulunamadı", body, req));
 });
 
 // Start server
