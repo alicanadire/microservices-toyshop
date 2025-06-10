@@ -40,18 +40,6 @@ services:
     volumes:
       - postgres_basket:/var/lib/postgresql/data/
 
-  identitydb:
-    container_name: identitydb
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=IdentityDb
-    restart: always
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres_identity:/var/lib/postgresql/data/
-
   distributedcache:
     container_name: distributedcache
     restart: always
