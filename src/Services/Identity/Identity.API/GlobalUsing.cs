@@ -7,3 +7,4 @@ global using System.Security.Claims;
 global using Identity.API.Data;
 global using Identity.API.Models;
 global using Identity.API.Services;
+global using Npgsql;
