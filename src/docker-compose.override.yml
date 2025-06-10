@@ -146,7 +146,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ApiSettings__GatewayAddress=http://yarpapigateway:8080
-      - IdentityServerSettings__Authority=http://localhost:5000
+      - IdentityServerSettings__Authority=http://identity.api:8080
       - IdentityServerSettings__ClientId=shopping-web
       - IdentityServerSettings__ClientSecret=""
       - IdentityServerSettings__RequireHttpsMetadata=false
