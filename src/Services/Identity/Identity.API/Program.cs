@@ -5,7 +5,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();
 
-Log.Information("🔑 Starting Identity Service - Stable Version!");
+Log.Information("🍃 Starting Identity Service with MongoDB!");
 
 try
 {
@@ -26,36 +26,36 @@ try
     builder.Host.UseSerilog((context, configuration) =>
         configuration.ReadFrom.Configuration(context.Configuration));
 
-    // Add services to the container
-    Log.Information("🔧 Configuring services...");
+    // MongoDB Configuration
+    Log.Information("🍃 Configuring MongoDB...");
     
-    // Use in-memory database for reliability and speed
-    builder.Services.AddDbContext<IdentityDbContext>(options =>
-    {
-        Log.Information("💾 Using in-memory database for development");
-        options.UseInMemoryDatabase("IdentityDb");
-    });
+    var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDb") 
+        ?? "mongodb://admin:password123@mongodb:27017/IdentityDb?authSource=admin";
     
-    Log.Information("✅ Database context configured");
+    Log.Information("📊 MongoDB Connection: {ConnectionString}", mongoConnectionString.Substring(0, 30) + "...");
 
-    // Configure Identity
-    builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-    {
-        // Password settings
-        options.Password.RequireDigit = true;
-        options.Password.RequiredLength = 6;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireUppercase = false;
-        options.Password.RequireLowercase = false;
+    // Configure Identity with MongoDB
+    builder.Services.AddIdentityMongoDbProvider<ApplicationUser, ApplicationRole, Guid>(
+        identity =>
+        {
+            // Password settings
+            identity.Password.RequireDigit = true;
+            identity.Password.RequiredLength = 6;
+            identity.Password.RequireNonAlphanumeric = false;
+            identity.Password.RequireUppercase = false;
+            identity.Password.RequireLowercase = false;
 
-        // User settings
-        options.User.RequireUniqueEmail = true;
-        options.SignIn.RequireConfirmedEmail = false;
-    })
-    .AddEntityFrameworkStores<IdentityDbContext>()
-    .AddDefaultTokenProviders();
+            // User settings
+            identity.User.RequireUniqueEmail = true;
+            identity.SignIn.RequireConfirmedEmail = false;
+        },
+        mongo =>
+        {
+            mongo.ConnectionString = mongoConnectionString;
+        }
+    );
 
-    Log.Information("✅ Identity configured");
+    Log.Information("✅ Identity with MongoDB configured");
 
     // Configure IdentityServer
     builder.Services.AddIdentityServer(options =>
@@ -102,23 +102,22 @@ try
     var app = builder.Build();
     Log.Information("✅ Application built successfully");
 
-    // Initialize database with seed data
-    Log.Information("🌱 Seeding database...");
+    // Initialize MongoDB data
+    Log.Information("🌱 Seeding MongoDB...");
     try
     {
         using (var scope = app.Services.CreateScope())
         {
-            var context = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
-            await SeedDataAsync(context, userManager, roleManager);
-            Log.Information("✅ Database seeded successfully");
+            await SeedMongoDataAsync(userManager, roleManager);
+            Log.Information("✅ MongoDB seeded successfully");
         }
     }
     catch (Exception ex)
     {
-        Log.Warning(ex, "⚠️ Database seeding failed, but continuing...");
+        Log.Warning(ex, "⚠️ MongoDB seeding failed, but continuing...");
     }
 
     Log.Information("🔧 Configuring middleware pipeline...");
@@ -141,12 +140,12 @@ try
         Log.Information("📡 Root endpoint called");
         return Results.Ok(new { 
             service = "Identity Service API", 
-            status = "Running with In-Memory Database", 
+            status = "Running with MongoDB", 
             timestamp = DateTime.UtcNow,
-            version = "3.0.0-stable",
+            version = "3.0.0-mongodb",
             issuer = app.Configuration["IdentityServer:IssuerUri"],
             environment = app.Environment.EnvironmentName,
-            database = "In-Memory"
+            database = "MongoDB"
         });
     });
     
@@ -155,7 +154,7 @@ try
         return Results.Ok(new { 
             status = "Healthy", 
             timestamp = DateTime.UtcNow,
-            database = "In-Memory",
+            database = "MongoDB",
             uptime = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
         });
     });
@@ -165,27 +164,31 @@ try
         return Results.Ok(new {
             Authority = app.Configuration["IdentityServer:IssuerUri"],
             Environment = app.Environment.EnvironmentName,
-            Database = "In-Memory",
-            Clients = IdentityServerConfig.Clients.Select(c => new { c.ClientId, c.ClientName }).ToList(),
-            Configuration = new {
-                Urls = app.Configuration["ASPNETCORE_URLS"],
-                HttpPorts = app.Configuration["ASPNETCORE_HTTP_PORTS"]
-            }
+            Database = "MongoDB",
+            ConnectionString = app.Configuration.GetConnectionString("MongoDb")?.Substring(0, 30) + "...",
+            Clients = IdentityServerConfig.Clients.Select(c => new { c.ClientId, c.ClientName }).ToList()
         });
     });
 
     app.MapGet("/debug/users", async (UserManager<ApplicationUser> userManager) => {
-        var users = userManager.Users.Select(u => new { 
-            u.Email, 
-            u.UserName, 
-            u.FirstName, 
-            u.LastName,
-            u.IsActive 
-        }).ToList();
-        return Results.Ok(new { Users = users, Count = users.Count });
+        try
+        {
+            var users = userManager.Users.Select(u => new { 
+                u.Email, 
+                u.UserName, 
+                u.FirstName, 
+                u.LastName,
+                u.IsActive 
+            }).ToList();
+            return Results.Ok(new { Users = users, Count = users.Count });
+        }
+        catch (Exception ex)
+        {
+            return Results.Ok(new { Error = ex.Message, Users = new object[0], Count = 0 });
+        }
     });
 
-    Log.Information("🚀 Starting Identity Server...");
+    Log.Information("🚀 Starting Identity Server with MongoDB...");
     Log.Information("🌐 Identity Server will be available at: http://localhost:6006");
     Log.Information("🏥 Health check: http://localhost:6006/health");
     Log.Information("🔍 Debug info: http://localhost:6006/debug/config");
@@ -202,19 +205,25 @@ finally
     Log.CloseAndFlush();
 }
 
-static async Task SeedDataAsync(IdentityDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+static async Task SeedMongoDataAsync(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
 {
-    await context.Database.EnsureCreatedAsync();
-
     // Create roles
     if (!await roleManager.RoleExistsAsync("Admin"))
     {
-        await roleManager.CreateAsync(new IdentityRole("Admin"));
+        await roleManager.CreateAsync(new ApplicationRole 
+        { 
+            Name = "Admin",
+            Description = "Administrator role with full access"
+        });
     }
 
     if (!await roleManager.RoleExistsAsync("Customer"))
     {
-        await roleManager.CreateAsync(new IdentityRole("Customer"));
+        await roleManager.CreateAsync(new ApplicationRole 
+        { 
+            Name = "Customer",
+            Description = "Customer role for shopping"
+        });
     }
 
     // Create admin user
