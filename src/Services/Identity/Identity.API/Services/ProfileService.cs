@@ -16,36 +16,78 @@ public class ProfileService : IProfileService
 
     public async Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
-        var user = await _userManager.GetUserAsync(context.Subject);
-        
-        if (user == null)
+        try
         {
-            _logger.LogError("User not found for subject {SubjectId}", context.Subject.GetSubjectId());
-            return;
+            var subjectId = context.Subject.GetSubjectId();
+            _logger.LogDebug("Getting profile data for subject {SubjectId}", subjectId);
+
+            var user = await _userManager.GetUserAsync(context.Subject);
+
+            if (user == null)
+            {
+                _logger.LogError("User not found for subject {SubjectId}", subjectId);
+                return;
+            }
+
+            if (!user.IsActive)
+            {
+                _logger.LogWarning("Inactive user attempted to get profile data: {UserId}", user.Id);
+                return;
+            }
+
+            var claims = new List<Claim>
+            {
+                new Claim("sub", user.Id.ToString()),
+                new Claim("email", user.Email ?? string.Empty),
+                new Claim("given_name", user.FirstName ?? string.Empty),
+                new Claim("family_name", user.LastName ?? string.Empty),
+                new Claim("name", user.FullName),
+                new Claim("email_verified", user.EmailConfirmed.ToString().ToLower()),
+                new Claim("user_id", user.Id.ToString())
+            };
+
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim("role", role));
+            }
+
+            _logger.LogDebug("Profile data retrieved for user {UserId} with {ClaimCount} claims and {RoleCount} roles",
+                user.Id, claims.Count, roles.Count);
+
+            context.IssuedClaims = claims.Where(x => context.RequestedClaimTypes.Contains(x.Type)).ToList();
         }
-
-        var claims = new List<Claim>
+        catch (Exception ex)
         {
-            new Claim("sub", user.Id),
-            new Claim("email", user.Email ?? string.Empty),
-            new Claim("given_name", user.FirstName),
-            new Claim("family_name", user.LastName),
-            new Claim("name", $"{user.FirstName} {user.LastName}"),
-            new Claim("email_verified", user.EmailConfirmed.ToString().ToLower())
-        };
-
-        var roles = await _userManager.GetRolesAsync(user);
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim("role", role));
+            _logger.LogError(ex, "Error occurred while getting profile data for subject {SubjectId}",
+                context.Subject.GetSubjectId());
         }
-
-        context.IssuedClaims = claims.Where(x => context.RequestedClaimTypes.Contains(x.Type)).ToList();
     }
 
     public async Task IsActiveAsync(IsActiveContext context)
     {
-        var user = await _userManager.GetUserAsync(context.Subject);
-        context.IsActive = user?.IsActive == true;
+        try
+        {
+            var subjectId = context.Subject.GetSubjectId();
+            var user = await _userManager.GetUserAsync(context.Subject);
+
+            var isActive = user?.IsActive == true;
+            context.IsActive = isActive;
+
+            _logger.LogDebug("User {SubjectId} active status: {IsActive}", subjectId, isActive);
+
+            if (user != null && isActive)
+            {
+                // Update last login time
+                user.LastLoginAt = DateTime.UtcNow;
+                await _userManager.UpdateAsync(user);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while checking if user is active for subject {SubjectId}",
+                context.Subject.GetSubjectId());
+            context.IsActive = false;
+        }
     }
 }
