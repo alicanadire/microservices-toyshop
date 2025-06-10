@@ -22,10 +22,10 @@ builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
         options.Authority = identityServerSettings["Authority"];
+        options.RequireHttpsMetadata = bool.Parse(identityServerSettings["RequireHttpsMetadata"] ?? "true");
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateAudience = false,
-            RequireHttpsMetadata = bool.Parse(identityServerSettings["RequireHttpsMetadata"] ?? "true")
+            ValidateAudience = false
         };
     });
 
