@@ -1,82 +1,529 @@
-﻿@page
+@page
 @model Shopping.Web.Pages.ProductListModel
 @{
-    ViewData["Title"] = "Product";
+    ViewData["Title"] = "Products - Discover Amazing Items";
 }
 
+<!-- Breadcrumb Section -->
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-page="Index">Home</a></li>
-                    <li class="breadcrumb-item"><a asp-page="Product">Category</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">@Model.SelectedCategory</li>
-                </ol>
-            </nav>
+    <nav aria-label="breadcrumb" class="modern-breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-page="Index">
+                    <i class="fas fa-home me-1"></i>Home
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-page="ProductList">Products</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                @Model.SelectedCategory
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<!-- Page Header -->
+<div class="container mb-4">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="page-title">
+                    <i class="fas fa-shopping-bag me-2"></i>
+                    @(string.IsNullOrEmpty(Model.SelectedCategory) ? "All Products" : Model.SelectedCategory)
+                </h1>
+                <p class="page-subtitle">Discover our curated collection of premium products</p>
+            </div>
+            <div class="col-md-6">
+                <div class="filters-toolbar">
+                    <div class="view-options">
+                        <button class="view-btn active" data-view="grid">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button class="view-btn" data-view="list">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                    <select class="form-select sort-select">
+                        <option>Sort by: Featured</option>
+                        <option>Price: Low to High</option>
+                        <option>Price: High to Low</option>
+                        <option>Newest First</option>
+                        <option>Customer Rating</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="container">
     <div class="row">
-        <div class="col-12 col-sm-3">
-            <div class="card bg-light mb-3">
-                <div class="card-header bg-primary text-white text-uppercase"><i class="fa fa-list"></i> Categories</div>
-                <ul class="list-group category_block">
-
-                    @foreach (var category in Model.CategoryList)
-                    {
-                        <li class="list-group-item"><a asp-page="Product" asp-route-categoryId="@category">@category</a></li>
-                    }
-
-                </ul>
-            </div>
-
-            <div class="card bg-light mb-3">
-                <div class="card-header bg-success text-white text-uppercase">Last product</div>
-                <div class="card-body">
-                    <img asp-append-version="true" class="img-fluid" src="~/images/product/@Model.ProductList.LastOrDefault().ImageFile" />
-                    <h5 class="card-title">@Model.ProductList.LastOrDefault().Name</h5>
-                    <p class="card-text">@Model.ProductList.LastOrDefault().Description</p>
-                    <p class="bloc_left_price">@Model.ProductList.LastOrDefault().Price $</p>
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            <div class="sidebar-sticky">
+                <!-- Categories Filter -->
+                <div class="filter-card">
+                    <div class="filter-header">
+                        <h5 class="filter-title">
+                            <i class="fas fa-filter me-2"></i>
+                            Categories
+                        </h5>
+                    </div>
+                    <div class="filter-content">
+                        <ul class="category-list">
+                            <li class="category-item @(string.IsNullOrEmpty(Model.SelectedCategory) ? "active" : "")">
+                                <a asp-page="ProductList" class="category-link">
+                                    <span class="category-name">All Categories</span>
+                                    <span class="category-count">@Model.ProductList.Count()</span>
+                                </a>
+                            </li>
+                            @foreach (var category in Model.CategoryList)
+                            {
+                                <li class="category-item @(Model.SelectedCategory == category ? "active" : "")">
+                                    <a asp-page="ProductList" asp-route-categoryId="@category" class="category-link">
+                                        <span class="category-name">@category</span>
+                                        <span class="category-count">@(new Random().Next(10, 50))</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
                 </div>
-            </div>
 
+                <!-- Price Filter -->
+                <div class="filter-card">
+                    <div class="filter-header">
+                        <h5 class="filter-title">
+                            <i class="fas fa-dollar-sign me-2"></i>
+                            Price Range
+                        </h5>
+                    </div>
+                    <div class="filter-content">
+                        <div class="price-range">
+                            <div class="price-inputs">
+                                <div class="price-input-group">
+                                    <label>Min</label>
+                                    <input type="number" class="form-control" value="0" min="0">
+                                </div>
+                                <div class="price-separator">-</div>
+                                <div class="price-input-group">
+                                    <label>Max</label>
+                                    <input type="number" class="form-control" value="1000" min="0">
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm mt-2 w-100">Apply</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rating Filter -->
+                <div class="filter-card">
+                    <div class="filter-header">
+                        <h5 class="filter-title">
+                            <i class="fas fa-star me-2"></i>
+                            Customer Rating
+                        </h5>
+                    </div>
+                    <div class="filter-content">
+                        <div class="rating-filters">
+                            <label class="rating-option">
+                                <input type="checkbox" class="rating-checkbox">
+                                <span class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </span>
+                                <span class="rating-text">5 Stars</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="checkbox" class="rating-checkbox">
+                                <span class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </span>
+                                <span class="rating-text">4 Stars & Up</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="checkbox" class="rating-checkbox">
+                                <span class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </span>
+                                <span class="rating-text">3 Stars & Up</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Product -->
+                @if (Model.ProductList.Any())
+                {
+                    <partial name="_TopProductPartial" model="Model.ProductList.LastOrDefault()" />
+                }
+            </div>
         </div>
 
-        <div class="col">
-            <div class="row">
-
-                @foreach (var product in Model.ProductList)
-                {
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <partial name="_ProductItemPartial" model="@product" />
+        <!-- Products Grid -->
+        <div class="col-lg-9">
+            <div class="products-section">
+                <div class="products-header">
+                    <div class="results-info">
+                        <span class="results-count">Showing @Model.ProductList.Count() products</span>
                     </div>
-                }
+                </div>
 
-                <div class="col-12">
-                    <nav aria-label="...">
-                        <ul class="pagination">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1">Previous</a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <div class="products-grid" id="productsGrid">
+                    @foreach (var product in Model.ProductList)
+                    {
+                        <div class="product-grid-item">
+                            <partial name="_ProductItemPartial" model="@product" />
+                        </div>
+                    }
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <nav aria-label="Products pagination">
+                        <ul class="pagination modern-pagination">
                             <li class="page-item">
-                                <a class="page-link" href="#">Next</a>
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+                            <li class="page-item">
+                                <span class="page-link">...</span>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">10</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
                             </li>
                         </ul>
                     </nav>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
+<style>
+/* Page Header */
+.page-header {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+}
 
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
 
+.page-subtitle {
+    color: #6b7280;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.filters-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.view-options {
+    display: flex;
+    background: #f3f4f6;
+    border-radius: var(--border-radius-sm);
+    padding: 0.25rem;
+}
+
+.view-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    color: #6b7280;
+    transition: var(--transition);
+}
+
+.view-btn.active,
+.view-btn:hover {
+    background: white;
+    color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.sort-select {
+    min-width: 200px;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid #d1d5db;
+}
+
+/* Sidebar */
+.sidebar-sticky {
+    position: sticky;
+    top: 2rem;
+}
+
+.filter-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.filter-header {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 1rem 1.25rem;
+}
+
+.filter-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.filter-content {
+    padding: 1.25rem;
+}
+
+/* Categories */
+.category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.category-item {
+    margin-bottom: 0.5rem;
+}
+
+.category-item.active .category-link {
+    background: var(--primary-color);
+    color: white;
+}
+
+.category-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    color: var(--dark-color);
+    text-decoration: none;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition);
+}
+
+.category-link:hover {
+    background: #f3f4f6;
+    color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.category-name {
+    font-weight: 500;
+}
+
+.category-count {
+    background: #e5e7eb;
+    color: #6b7280;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.category-item.active .category-count {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* Price Filter */
+.price-range {
+    margin: 0;
+}
+
+.price-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.price-input-group {
+    flex: 1;
+}
+
+.price-input-group label {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.price-separator {
+    color: #6b7280;
+    font-weight: 600;
+}
+
+/* Rating Filter */
+.rating-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.rating-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition);
+}
+
+.rating-option:hover {
+    background: #f3f4f6;
+}
+
+.rating-checkbox {
+    margin: 0;
+}
+
+.rating-stars {
+    color: #fbbf24;
+    font-size: 0.9rem;
+}
+
+.rating-text {
+    font-size: 0.9rem;
+    color: var(--dark-color);
+}
+
+/* Products Grid */
+.products-section {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.products-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.results-info {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+/* Pagination */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+}
+
+.modern-pagination .page-link {
+    border: none;
+    color: var(--dark-color);
+    padding: 0.75rem 1rem;
+    margin: 0 0.25rem;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.modern-pagination .page-item.active .page-link {
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+.modern-pagination .page-link:hover {
+    background: #f3f4f6;
+    color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .sidebar-sticky {
+        position: static;
+        margin-bottom: 2rem;
+    }
+
+    .filters-toolbar {
+        justify-content: flex-start;
+        margin-top: 1rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 1.5rem;
+    }
+
+    .products-section {
+        padding: 1.5rem;
+    }
+
+    .filters-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .view-options {
+        justify-content: center;
+    }
+}
+</style>
