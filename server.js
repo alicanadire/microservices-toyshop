@@ -1548,67 +1548,235 @@ app.get("/orders", (req, res) => {
 });
 
 app.get("/contact", (req, res) => {
-  const body = `<div class="container mt-3">
-            <h2>Contact Us</h2>
-            <div class="row">
-                <div class="col-md-8">
+  const body = `
+    <div class="main-container">
+        <div class="container py-4">
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h2 class="fw-bold">
+                        <i class="fas fa-envelope me-2"></i>Bizimle İletişime Geçin
+                    </h2>
+                    <p class="text-muted">Sorularınız için buradayız! Size nasıl yardımcı olabiliriz?</p>
+                </div>
+            </div>
+
+            <div class="row g-5">
+                <!-- Contact Form -->
+                <div class="col-lg-8">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Send us a message</h4>
+                            <h4><i class="fas fa-paper-plane me-2"></i>Mesaj Gönder</h4>
                         </div>
                         <div class="card-body">
                             <form class="needs-validation" novalidate>
-                                <div class="form-group">
-                                    <label for="name">Full Name</label>
-                                    <input type="text" class="form-control" id="name" required>
-                                    <div class="invalid-feedback">Please provide a valid name.</div>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="name" class="form-label">
+                                            <i class="fas fa-user me-2"></i>Ad Soyad
+                                        </label>
+                                        <input type="text" class="form-control" id="name" required>
+                                        <div class="invalid-feedback">Lütfen adınızı ve soyadınızı girin.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">
+                                            <i class="fas fa-envelope me-2"></i>E-posta
+                                        </label>
+                                        <input type="email" class="form-control" id="email" required>
+                                        <div class="invalid-feedback">Lütfen geçerli bir e-posta adresi girin.</div>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="email" class="form-control" id="email" required>
-                                    <div class="invalid-feedback">Please provide a valid email.</div>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="phone" class="form-label">
+                                            <i class="fas fa-phone me-2"></i>Telefon
+                                        </label>
+                                        <input type="tel" class="form-control" id="phone">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="subject" class="form-label">
+                                            <i class="fas fa-tag me-2"></i>Konu
+                                        </label>
+                                        <select class="form-select" id="subject" required>
+                                            <option value="">Konu seçin</option>
+                                            <option value="product">Ürün Sorunu</option>
+                                            <option value="order">Sipariş Sorunu</option>
+                                            <option value="return">İade Talebi</option>
+                                            <option value="suggestion">Öneri</option>
+                                            <option value="other">Diğer</option>
+                                        </select>
+                                        <div class="invalid-feedback">Lütfen bir konu seçin.</div>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="subject">Subject</label>
-                                    <input type="text" class="form-control" id="subject" required>
-                                    <div class="invalid-feedback">Please provide a subject.</div>
+                                <div class="mb-4">
+                                    <label for="message" class="form-label">
+                                        <i class="fas fa-comment me-2"></i>Mesajınız
+                                    </label>
+                                    <textarea class="form-control" id="message" rows="6" placeholder="Mesajınızı buraya yazın..." required></textarea>
+                                    <div class="invalid-feedback">Lütfen mesajınızı yazın.</div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="message">Message</label>
-                                    <textarea class="form-control" id="message" rows="5" required></textarea>
-                                    <div class="invalid-feedback">Please provide a message.</div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="privacy" required>
+                                        <label class="form-check-label" for="privacy">
+                                            <a href="/privacy" class="text-decoration-none">Gizlilik Politikası</a>nı okudum ve kabul ediyorum.
+                                        </label>
+                                        <div class="invalid-feedback">Gizlilik politikasını kabul etmelisiniz.</div>
+                                    </div>
                                 </div>
-                                <button class="btn btn-primary" type="submit">Send Message</button>
+                                <button class="btn btn-primary btn-lg" type="submit">
+                                    <i class="fas fa-paper-plane me-2"></i>Mesajı Gönder
+                                </button>
                             </form>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card">
+
+                <!-- Contact Information -->
+                <div class="col-lg-4">
+                    <div class="card h-100">
                         <div class="card-header">
-                            <h4>Contact Information</h4>
+                            <h4><i class="fas fa-address-book me-2"></i>İletişim Bilgileri</h4>
                         </div>
                         <div class="card-body">
-                            <p><i class="fa fa-home"></i> <strong>Address:</strong><br>
-                            123 EShop Street<br>
-                            Tech City, TC 12345</p>
+                            <div class="contact-item mb-4">
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="contact-icon me-3">
+                                        <i class="fas fa-map-marker-alt fa-lg text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Adres</h6>
+                                        <p class="text-muted mb-0">
+                                            ToyShop Merkez Mağaza<br>
+                                            Çocuk Sokak No: 123<br>
+                                            Oyuncak Mahallesi, İstanbul 34000
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <p><i class="fa fa-phone"></i> <strong>Phone:</strong><br>
-                            +1 (234) 567-8900</p>
+                            <div class="contact-item mb-4">
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="contact-icon me-3">
+                                        <i class="fas fa-phone fa-lg text-success"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Telefon</h6>
+                                        <p class="text-muted mb-0">
+                                            <a href="tel:+902121234567" class="text-decoration-none">+90 212 123 45 67</a><br>
+                                            <small>Müşteri Hizmetleri</small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <p><i class="fa fa-envelope"></i> <strong>Email:</strong><br>
-                            contact@eshop.com</p>
+                            <div class="contact-item mb-4">
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="contact-icon me-3">
+                                        <i class="fas fa-envelope fa-lg text-info"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">E-posta</h6>
+                                        <p class="text-muted mb-0">
+                                            <a href="mailto:info@toyshop.com" class="text-decoration-none">info@toyshop.com</a><br>
+                                            <a href="mailto:destek@toyshop.com" class="text-decoration-none">destek@toyshop.com</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <p><i class="fa fa-clock-o"></i> <strong>Business Hours:</strong><br>
-                            Mon-Fri: 9:00 AM - 6:00 PM<br>
-                            Sat-Sun: 10:00 AM - 4:00 PM</p>
+                            <div class="contact-item mb-4">
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="contact-icon me-3">
+                                        <i class="fas fa-clock fa-lg text-warning"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Çalışma Saatleri</h6>
+                                        <p class="text-muted mb-0">
+                                            <strong>Pazartesi - Cumartesi:</strong><br>
+                                            09:00 - 22:00<br>
+                                            <strong>Pazar:</strong><br>
+                                            10:00 - 20:00
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="social-links">
+                                <h6 class="mb-3">Sosyal Medya</h6>
+                                <div class="d-flex gap-3">
+                                    <a href="#" class="btn btn-outline-primary rounded-circle">
+                                        <i class="fab fa-facebook"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-outline-info rounded-circle">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-outline-primary rounded-circle">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-outline-danger rounded-circle">
+                                        <i class="fab fa-youtube"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>`;
 
-  res.send(renderTemplate("Contact", body, req));
+            <!-- FAQ Section -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-question-circle me-2"></i>Sık Sorulan Sorular</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="faqAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                            Kargo ücreti ne kadar?
+                                        </button>
+                                    </h2>
+                                    <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            500₺ ve üzeri siparişlerde kargo tamamen ücretsizdir. 500₺ altı siparişlerde kargo ücreti 29₺'dir.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                            İade koşulları nelerdir?
+                                        </button>
+                                    </h2>
+                                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            Ürünlerinizi teslim aldığınız tarihten itibaren 14 gün içinde, ambalajında ve hiç kullanılmamış olarak iade edebilirsiniz.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                            Siparişimi nasıl takip edebilirim?
+                                        </button>
+                                    </h2>
+                                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            Siparişiniz onaylandıktan sonra size gönderilen kargo takip numarasıyla siparişinizi takip edebilirsiniz.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+  res.send(renderTemplate("İletişim", body, req));
 });
 
 // API endpoints for future integration
