@@ -185,10 +185,10 @@ try
     // Security headers
     app.Use(async (context, next) =>
     {
-        context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-        context.Response.Headers.Add("X-Frame-Options", "DENY");
-        context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
-        context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+        context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+        context.Response.Headers["X-Frame-Options"] = "DENY";
+        context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+        context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
         await next();
     });
 
@@ -291,7 +291,7 @@ try
         {
             // Add correlation ID for request tracking
             var correlationId = Guid.NewGuid().ToString();
-            context.Response.Headers.Add("X-Correlation-ID", correlationId);
+            context.Response.Headers["X-Correlation-ID"] = correlationId;
 
             Log.Debug("🔄 Proxy request {CorrelationId}: {Method} {Path}",
                 correlationId, context.Request.Method, context.Request.Path);
