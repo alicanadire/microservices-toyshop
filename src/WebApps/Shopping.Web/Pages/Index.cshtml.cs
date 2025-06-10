@@ -1,16 +1,39 @@
+using Refit;
+
 namespace Shopping.Web.Pages;
-public class IndexModel
-    (ICatalogService catalogService, IBasketService basketService, ILogger<IndexModel> logger)
-    : PageModel
+
+public class IndexModel(ICatalogService catalogService, IBasketService basketService, ILogger<IndexModel> logger) : PageModel
 {    
-    public IEnumerable<ProductModel> ProductList { get; set; } = new List<ProductModel>();    
+    public IEnumerable<ProductModel> ProductList { get; set; } = new List<ProductModel>();
+    public bool IsDataLoaded { get; set; } = false;
+    public string ErrorMessage { get; set; } = string.Empty;
 
     public async Task<IActionResult> OnGetAsync()
     {
         logger.LogInformation("Index page visited");
-        var result = await catalogService.GetProducts();
-        //var result = await catalogService.GetProducts(2, 3);
-        ProductList = result.Products;
+        
+        try
+        {
+            var result = await catalogService.GetProducts();
+            ProductList = result.Products ?? new List<ProductModel>();
+            IsDataLoaded = true;
+        }
+        catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            // Anonymous user - show welcome message instead of products
+            logger.LogInformation("Anonymous user accessing index page");
+            ProductList = GetSampleProducts();
+            IsDataLoaded = false;
+            ErrorMessage = "Please log in to see our full product catalog";
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error loading products on index page");
+            ProductList = GetSampleProducts();
+            IsDataLoaded = false;
+            ErrorMessage = "Unable to load products at this time";
+        }
+
         return Page();
     }
 
@@ -18,21 +41,77 @@ public class IndexModel
     {
         logger.LogInformation("Add to cart button clicked");
 
-        var productResponse = await catalogService.GetProduct(productId);
-
-        var basket = await basketService.LoadUserBasket();
-
-        basket.Items.Add(new ShoppingCartItemModel
+        try
         {
-            ProductId = productId,
-            ProductName = productResponse.Product.Name,
-            Price = productResponse.Product.Price,
-            Quantity = 1,
-            Color = "Black"
-        });
+            var productResponse = await catalogService.GetProduct(productId);
 
-        await basketService.StoreBasket(new StoreBasketRequest(basket));
-        
-        return RedirectToPage("Cart");
-    }    
+            var basket = await basketService.LoadUserBasket();
+
+            basket.Items.Add(new ShoppingCartItemModel
+            {
+                ProductId = productId,
+                ProductName = productResponse.Product.Name,
+                Price = productResponse.Product.Price,
+                Quantity = 1,
+                Color = "Black"
+            });
+
+            await basketService.StoreBasket(new StoreBasketRequest(basket));
+            
+            return RedirectToPage("Cart");
+        }
+        catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            // User not authenticated, redirect to login
+            return RedirectToPage("/Account/Login");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error adding product to cart");
+            return Page();
+        }
+    }
+
+    private List<ProductModel> GetSampleProducts()
+    {
+        return new List<ProductModel>
+        {
+            new ProductModel
+            {
+                Id = Guid.NewGuid(),
+                Name = "Welcome to EShop!",
+                Description = "Sign in to see our full product catalog with amazing products",
+                ImageFile = "sample-product.jpg",
+                Price = 0,
+                Category = new List<string> { "Welcome" }
+            },
+            new ProductModel
+            {
+                Id = Guid.NewGuid(),
+                Name = "Premium Electronics",
+                Description = "Discover our premium electronics collection",
+                ImageFile = "electronics.jpg", 
+                Price = 0,
+                Category = new List<string> { "Electronics" }
+            },
+            new ProductModel
+            {
+                Id = Guid.NewGuid(),
+                Name = "Fashion & Style",
+                Description = "Browse our latest fashion trends",
+                ImageFile = "fashion.jpg", 
+                Price = 0,
+                Category = new List<string> { "Fashion" }
+            },
+            new ProductModel
+            {
+                Id = Guid.NewGuid(),
+                Name = "Home & Garden",
+                Description = "Everything for your home and garden",
+                ImageFile = "home.jpg", 
+                Price = 0,
+                Category = new List<string> { "Home" }
+            }
+        };
+    }
 }

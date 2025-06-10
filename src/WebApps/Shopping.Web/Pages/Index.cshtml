@@ -1,7 +1,22 @@
-﻿@page
+@page
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading"><i class="fa fa-info-circle"></i> Welcome to EShop!</h4>
+        <p>@Model.ErrorMessage</p>
+        <hr>
+        <p class="mb-0">
+            <a href="/Account/Login" class="btn btn-primary"><i class="fa fa-sign-in"></i> Sign In</a>
+            or
+            <a href="/Account/Register" class="btn btn-success"><i class="fa fa-user-plus"></i> Register</a>
+            to access our full product catalog and start shopping!
+        </p>
+    </div>
 }
 
 <hr />
