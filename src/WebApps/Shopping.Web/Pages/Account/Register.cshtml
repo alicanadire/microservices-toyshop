@@ -1,32 +1,236 @@
 @page
 @model Shopping.Web.Pages.Account.RegisterModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Join EShop - Create Account";
+    Layout = "~/Pages/Shared/_AuthLayout.cshtml";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-success text-white text-center">
-                    <h4><i class="fa fa-user-plus"></i> Join EShop</h4>
-                    <p class="mb-0">Create your account</p>
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header register-header">
+            <div class="auth-logo">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <h1 class="auth-title">Join EShop!</h1>
+            <p class="auth-subtitle">Create your account and start shopping</p>
+        </div>
+
+        <div class="auth-body">
+            <div class="auth-button-container">
+                <a href="/Account/Challenge" class="auth-button auth-button-success">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Create EShop Account</span>
+                </a>
+            </div>
+
+            <div class="auth-divider">
+                <span>benefits</span>
+            </div>
+
+            <div class="auth-features">
+                <div class="feature-item">
+                    <i class="fas fa-truck"></i>
+                    <span>Free shipping on orders over $50</span>
                 </div>
-                <div class="card-body p-4">
-                    <div class="text-center mb-4">
-                        <a href="/Account/Challenge" class="btn btn-lg btn-success btn-block">
-                            <i class="fa fa-user-plus"></i> Sign Up with EShop Identity
-                        </a>
-                    </div>
-                    <hr>
-                    <div class="text-center">
-                        <p class="text-muted">
-                            Already have an account? 
-                            <a href="/Account/Login" class="text-primary">Sign in here</a>
-                        </p>
-                    </div>
+                <div class="feature-item">
+                    <i class="fas fa-heart"></i>
+                    <span>Save your favorite products</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Fast and easy checkout</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-gift"></i>
+                    <span>Exclusive member discounts</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Get notified about sales</span>
                 </div>
             </div>
         </div>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="/Account/Login" class="auth-link">Sign in here</a></p>
+        </div>
     </div>
 </div>
+
+@section Styles {
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            width: 100%;
+            max-width: 420px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .auth-header {
+            text-align: center;
+            padding: 40px 40px 20px;
+            color: white;
+        }
+
+        .auth-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 10px;
+        }
+
+        .auth-subtitle {
+            opacity: 0.9;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .auth-body {
+            padding: 40px;
+        }
+
+        .auth-button-container {
+            margin-bottom: 30px;
+        }
+
+        .auth-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 16px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .auth-button-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .auth-button-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .auth-button i {
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+
+        .auth-divider {
+            text-align: center;
+            position: relative;
+            margin: 30px 0;
+            color: #999;
+        }
+
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #eee;
+        }
+
+        .auth-divider span {
+            background: white;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .auth-features {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .feature-item i {
+            width: 20px;
+            margin-right: 12px;
+            color: #28a745;
+        }
+
+        .auth-footer {
+            padding: 20px 40px 40px;
+            text-align: center;
+            color: #666;
+        }
+
+        .auth-link {
+            color: #28a745;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-link:hover {
+            color: #20c997;
+            text-decoration: none;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 10px;
+            }
+            
+            .auth-header, .auth-body, .auth-footer {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+        }
+    </style>
+}

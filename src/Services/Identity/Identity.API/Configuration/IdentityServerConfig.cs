@@ -58,8 +58,8 @@ public static class IdentityServerConfig
                 RequirePkce = true,
                 AllowOfflineAccess = true,
 
-                RedirectUris = { "http://localhost:6005/signin-oidc", "http://localhost:5001/signin-oidc" },
-                PostLogoutRedirectUris = { "http://localhost:6005/signout-callback-oidc", "http://localhost:5001/signout-callback-oidc" },
+                RedirectUris = { "http://localhost:6005/signin-oidc" },
+                PostLogoutRedirectUris = { "http://localhost:6005/signout-callback-oidc", "http://localhost:6005/" },
 
                 AllowedScopes =
                 {
