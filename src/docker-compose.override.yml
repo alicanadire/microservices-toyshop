@@ -69,6 +69,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings__Database=Server=identitydb;Port=5432;Database=IdentityDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - IdentityServer__IssuerUri=http://localhost:5000
     depends_on:
       - identitydb
     ports:
