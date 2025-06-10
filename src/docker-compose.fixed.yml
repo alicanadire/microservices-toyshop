@@ -1,0 +1,315 @@
+version: "3.8"
+
+networks:
+  eshop-network:
+    driver: bridge
+
+services:
+  # Infrastructure Services
+  identitydb:
+    image: postgres:15
+    container_name: identitydb
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=IdentityDb
+    restart: always
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_identity:/var/lib/postgresql/data/
+    networks:
+      - eshop-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  catalogdb:
+    image: postgres:15
+    container_name: catalogdb
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=CatalogDb
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_catalog:/var/lib/postgresql/data/
+    networks:
+      - eshop-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  basketdb:
+    image: postgres:15
+    container_name: basketdb
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=BasketDb
+    restart: always
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_basket:/var/lib/postgresql/data/
+    networks:
+      - eshop-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  orderdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: orderdb
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=SwN12345678
+    restart: always
+    ports:
+      - "1433:1433"
+    networks:
+      - eshop-network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/opt/mssql-tools/bin/sqlcmd",
+          "-S",
+          "localhost",
+          "-U",
+          "sa",
+          "-P",
+          "SwN12345678",
+          "-Q",
+          "SELECT 1",
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  distributedcache:
+    image: redis:7-alpine
+    container_name: distributedcache
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - eshop-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  messagebroker:
+    image: rabbitmq:3-management-alpine
+    container_name: messagebroker
+    hostname: ecommerce-mq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - eshop-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Identity Server - Bu MUTLAKA çalışmalı!
+  identity.api:
+    image: ${DOCKER_REGISTRY-}identityapi
+    container_name: identity.api
+    build:
+      context: .
+      dockerfile: Services/Identity/Identity.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__Database=Server=identitydb;Port=5432;Database=IdentityDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - IdentityServer__IssuerUri=http://localhost:5000
+      - IdentityServer__PublicOrigin=http://localhost:5000
+    depends_on:
+      identitydb:
+        condition: service_healthy
+    ports:
+      - "5000:8080"
+    networks:
+      - eshop-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  catalog.api:
+    image: ${DOCKER_REGISTRY-}catalogapi
+    container_name: catalog.api
+    build:
+      context: .
+      dockerfile: Services/Catalog/Catalog.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__Database=Server=catalogdb;Port=5432;Database=CatalogDb;User Id=postgres;Password=postgres;Include Error Detail=true
+    depends_on:
+      catalogdb:
+        condition: service_healthy
+    ports:
+      - "6000:8080"
+    networks:
+      - eshop-network
+    restart: unless-stopped
+
+  basket.api:
+    image: ${DOCKER_REGISTRY-}basketapi
+    container_name: basket.api
+    build:
+      context: .
+      dockerfile: Services/Basket/Basket.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__Database=Server=basketdb;Port=5432;Database=BasketDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - ConnectionStrings__Redis=distributedcache:6379
+      - GrpcSettings__DiscountUrl=http://discount.grpc:8080
+      - MessageBroker__Host=amqp://ecommerce-mq:5672
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
+    depends_on:
+      basketdb:
+        condition: service_healthy
+      distributedcache:
+        condition: service_healthy
+      messagebroker:
+        condition: service_healthy
+    ports:
+      - "6001:8080"
+    networks:
+      - eshop-network
+    restart: unless-stopped
+
+  discount.grpc:
+    image: ${DOCKER_REGISTRY-}discountgrpc
+    container_name: discount.grpc
+    build:
+      context: .
+      dockerfile: Services/Discount/Discount.Grpc/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__Database=Data Source=discountdb
+    ports:
+      - "6002:8080"
+    networks:
+      - eshop-network
+    restart: unless-stopped
+
+  ordering.api:
+    image: ${DOCKER_REGISTRY-}orderingapi
+    container_name: ordering.api
+    build:
+      context: .
+      dockerfile: Services/Ordering/Ordering.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__Database=Server=orderdb;Database=OrderDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True
+      - MessageBroker__Host=amqp://ecommerce-mq:5672
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
+      - FeatureManagement__OrderFullfilment=false
+    depends_on:
+      orderdb:
+        condition: service_healthy
+      messagebroker:
+        condition: service_healthy
+    ports:
+      - "6003:8080"
+    networks:
+      - eshop-network
+    restart: unless-stopped
+
+  # API Gateway - Düzgün yapılandırılmış
+  yarpapigateway:
+    image: ${DOCKER_REGISTRY-}yarpapigateway
+    container_name: yarpapigateway
+    build:
+      context: .
+      dockerfile: ApiGateways/YarpApiGateway/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
+      - IdentityServerSettings__Authority=http://identity.api:8080
+      - IdentityServerSettings__ApiName=gateway
+      - IdentityServerSettings__RequireHttpsMetadata=false
+      - ReverseProxy__Clusters__catalog-cluster__Destinations__destination1__Address=http://catalog.api:8080
+      - ReverseProxy__Clusters__basket-cluster__Destinations__destination1__Address=http://basket.api:8080
+      - ReverseProxy__Clusters__ordering-cluster__Destinations__destination1__Address=http://ordering.api:8080
+    depends_on:
+      identity.api:
+        condition: service_healthy
+      catalog.api:
+        condition: service_started
+      basket.api:
+        condition: service_started
+      ordering.api:
+        condition: service_started
+    ports:
+      - "6004:8080"
+    networks:
+      - eshop-network
+    restart: unless-stopped
+
+  # Shopping Web - Identity Server ile bağlantılı
+  shopping.web:
+    image: ${DOCKER_REGISTRY-}shoppingweb
+    container_name: shopping.web
+    build:
+      context: .
+      dockerfile: WebApps/Shopping.Web/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
+      - ApiSettings__GatewayAddress=http://yarpapigateway:8080
+      - IdentityServerSettings__Authority=http://identity.api:8080
+      - IdentityServerSettings__ClientId=shopping-web
+      - IdentityServerSettings__ClientSecret=""
+      - IdentityServerSettings__RequireHttpsMetadata=false
+      - IdentityServerSettings__Scope=openid profile email roles catalog basket ordering shopping
+    depends_on:
+      identity.api:
+        condition: service_healthy
+      yarpapigateway:
+        condition: service_started
+    ports:
+      - "6005:8080"
+    networks:
+      - eshop-network
+    restart: unless-stopped
+
+volumes:
+  postgres_catalog:
+  postgres_basket:
+  postgres_identity:
