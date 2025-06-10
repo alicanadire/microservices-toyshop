@@ -5,7 +5,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();
 
-Log.Information("🍃 Starting Identity Service with MongoDB!");
+Log.Information("🔑 Starting Identity Service - Stable Version!");
 
 try
 {
@@ -13,12 +13,12 @@ try
 
     // Ensure we listen on all interfaces
     builder.WebHost.UseUrls("http://+:8080");
-
+    
     // Enhanced logging for debugging
     builder.Logging.ClearProviders();
     builder.Logging.AddConsole();
     builder.Logging.SetMinimumLevel(LogLevel.Debug);
-
+    
     Log.Information("✅ WebHost configured successfully");
     Log.Information("🌐 Listening on: http://+:8080");
     Log.Information("🔧 Environment: {Environment}", builder.Environment.EnvironmentName);
@@ -26,51 +26,36 @@ try
     builder.Host.UseSerilog((context, configuration) =>
         configuration.ReadFrom.Configuration(context.Configuration));
 
-    // MongoDB Configuration
-    Log.Information("🍃 Configuring MongoDB...");
-
-    var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDb")
-        ?? "mongodb://mongodb:27017";
-    var mongoDatabaseName = builder.Configuration["MongoDb:DatabaseName"] ?? "IdentityDb";
-
-    Log.Information("📊 MongoDB Connection: {ConnectionString}", mongoConnectionString);
-    Log.Information("🗄️ Database Name: {DatabaseName}", mongoDatabaseName);
-
-    // Register MongoDB client
-    builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
+    // Add services to the container
+    Log.Information("🔧 Configuring services...");
+    
+    // Use in-memory database for reliability and speed
+    builder.Services.AddDbContext<IdentityDbContext>(options =>
     {
-        return new MongoClient(mongoConnectionString);
+        Log.Information("💾 Using in-memory database for development");
+        options.UseInMemoryDatabase("IdentityDb");
     });
+    
+    Log.Information("✅ Database context configured");
 
-    // Register MongoDB context
-    builder.Services.AddScoped<MongoIdentityContext>(serviceProvider =>
+    // Configure Identity
+    builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
-        var client = serviceProvider.GetRequiredService<IMongoClient>();
-        return new MongoIdentityContext(client, mongoDatabaseName);
-    });
+        // Password settings
+        options.Password.RequireDigit = true;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
 
-    // Configure Identity with MongoDB
-    builder.Services.AddIdentityMongoDbProvider<ApplicationUser, ApplicationRole, Guid>(
-        identity =>
-        {
-            // Password settings
-            identity.Password.RequireDigit = true;
-            identity.Password.RequiredLength = 6;
-            identity.Password.RequireNonAlphanumeric = false;
-            identity.Password.RequireUppercase = false;
-            identity.Password.RequireLowercase = false;
+        // User settings
+        options.User.RequireUniqueEmail = true;
+        options.SignIn.RequireConfirmedEmail = false;
+    })
+    .AddEntityFrameworkStores<IdentityDbContext>()
+    .AddDefaultTokenProviders();
 
-            // User settings
-            identity.User.RequireUniqueEmail = true;
-            identity.SignIn.RequireConfirmedEmail = false;
-        },
-        mongo =>
-        {
-            mongo.ConnectionString = mongoConnectionString;
-        }
-    );
-
-    Log.Information("✅ Identity with MongoDB configured");
+    Log.Information("✅ Identity configured");
 
     // Configure IdentityServer
     builder.Services.AddIdentityServer(options =>
@@ -117,26 +102,27 @@ try
     var app = builder.Build();
     Log.Information("✅ Application built successfully");
 
-    // Initialize MongoDB data
-    Log.Information("🌱 Seeding MongoDB...");
+    // Initialize database with seed data
+    Log.Information("🌱 Seeding database...");
     try
     {
         using (var scope = app.Services.CreateScope())
         {
+            var context = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            await SeedMongoDataAsync(userManager, roleManager);
-            Log.Information("✅ MongoDB seeded successfully");
+            await SeedDataAsync(context, userManager, roleManager);
+            Log.Information("✅ Database seeded successfully");
         }
     }
     catch (Exception ex)
     {
-        Log.Warning(ex, "⚠️ MongoDB seeding failed, but continuing...");
+        Log.Warning(ex, "⚠️ Database seeding failed, but continuing...");
     }
 
     Log.Information("🔧 Configuring middleware pipeline...");
-
+    
     // Configure the HTTP request pipeline
     if (app.Environment.IsDevelopment())
     {
@@ -149,38 +135,37 @@ try
     app.UseAuthorization();
 
     Log.Information("🌐 Configuring endpoints...");
-
+    
     // Health check and debug endpoints
     app.MapGet("/", () => {
         Log.Information("📡 Root endpoint called");
-        return Results.Ok(new {
-            service = "Identity Service API",
-            status = "Running with MongoDB",
+        return Results.Ok(new { 
+            service = "Identity Service API", 
+            status = "Running with In-Memory Database", 
             timestamp = DateTime.UtcNow,
-            version = "3.0.0-mongodb",
+            version = "3.0.0-stable",
             issuer = app.Configuration["IdentityServer:IssuerUri"],
             environment = app.Environment.EnvironmentName,
-            database = "MongoDB"
+            database = "In-Memory"
         });
     });
-
+    
     app.MapGet("/health", () => {
         Log.Information("🏥 Health check endpoint called");
-        return Results.Ok(new {
-            status = "Healthy",
+        return Results.Ok(new { 
+            status = "Healthy", 
             timestamp = DateTime.UtcNow,
-            database = "MongoDB",
+            database = "In-Memory",
             uptime = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
         });
     });
-
+    
     app.MapGet("/debug/config", () => {
         Log.Information("🔍 Debug config endpoint called");
         return Results.Ok(new {
             Authority = app.Configuration["IdentityServer:IssuerUri"],
             Environment = app.Environment.EnvironmentName,
-            Database = "MongoDB",
-            ConnectionString = app.Configuration.GetConnectionString("MongoDb")?.Substring(0, 30) + "...",
+            Database = "In-Memory",
             Clients = IdentityServerConfig.Clients.Select(c => new { c.ClientId, c.ClientName }).ToList(),
             Configuration = new {
                 Urls = app.Configuration["ASPNETCORE_URLS"],
@@ -190,22 +175,22 @@ try
     });
 
     app.MapGet("/debug/users", async (UserManager<ApplicationUser> userManager) => {
-        var users = userManager.Users.Select(u => new {
-            u.Email,
-            u.UserName,
-            u.FirstName,
+        var users = userManager.Users.Select(u => new { 
+            u.Email, 
+            u.UserName, 
+            u.FirstName, 
             u.LastName,
-            u.IsActive
+            u.IsActive 
         }).ToList();
         return Results.Ok(new { Users = users, Count = users.Count });
     });
 
-    Log.Information("🚀 Starting Identity Server with MongoDB...");
+    Log.Information("🚀 Starting Identity Server...");
     Log.Information("🌐 Identity Server will be available at: http://localhost:6006");
     Log.Information("🏥 Health check: http://localhost:6006/health");
     Log.Information("🔍 Debug info: http://localhost:6006/debug/config");
     Log.Information("👥 Users info: http://localhost:6006/debug/users");
-
+    
     app.Run();
 }
 catch (Exception ex)
@@ -217,25 +202,19 @@ finally
     Log.CloseAndFlush();
 }
 
-static async Task SeedMongoDataAsync(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+static async Task SeedDataAsync(IdentityDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
 {
+    await context.Database.EnsureCreatedAsync();
+
     // Create roles
     if (!await roleManager.RoleExistsAsync("Admin"))
     {
-        await roleManager.CreateAsync(new ApplicationRole
-        {
-            Name = "Admin",
-            Description = "Administrator role with full access"
-        });
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
     }
 
     if (!await roleManager.RoleExistsAsync("Customer"))
     {
-        await roleManager.CreateAsync(new ApplicationRole
-        {
-            Name = "Customer",
-            Description = "Customer role for shopping"
-        });
+        await roleManager.CreateAsync(new IdentityRole("Customer"));
     }
 
     // Create admin user

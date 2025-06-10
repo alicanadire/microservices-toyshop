@@ -1,13 +1,22 @@
-// This file is kept for compatibility but not used with MongoDB
-// MongoDB uses its own document-based storage system
-// Identity data is now stored in MongoDB collections:
-// - users collection for ApplicationUser
-// - roles collection for ApplicationRole
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Identity.API.Data;
 
-public class IdentityDbContext
+public class IdentityDbContext : IdentityDbContext<ApplicationUser>
 {
-    // This class is no longer used with MongoDB implementation
-    // MongoDB context is handled by MongoIdentityContext
+    public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options)
+    {
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        
+        // Customize table names if needed
+        builder.Entity<ApplicationUser>(entity =>
+        {
+            entity.ToTable("Users");
+        });
+    }
 }
