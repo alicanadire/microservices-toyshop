@@ -108,11 +108,15 @@ services:
       - MessageBroker__Host=amqp://ecommerce-mq:5672
       - MessageBroker__UserName=guest
       - MessageBroker__Password=guest
+      - IdentityServerSettings__Authority=http://identity.api:8080
+      - IdentityServerSettings__ApiName=basket
+      - IdentityServerSettings__RequireHttpsMetadata=false
     depends_on:
       - basketdb
       - distributedcache
       - discount.grpc
       - messagebroker
+      - identity.api
     ports:
       - "6001:8080"
 
@@ -133,9 +137,13 @@ services:
       - MessageBroker__UserName=guest
       - MessageBroker__Password=guest
       - FeatureManagement__OrderFullfilment=false
+      - IdentityServerSettings__Authority=http://identity.api:8080
+      - IdentityServerSettings__ApiName=ordering
+      - IdentityServerSettings__RequireHttpsMetadata=false
     depends_on:
       - orderdb
       - messagebroker
+      - identity.api
     ports:
       - "6003:8080"
 
