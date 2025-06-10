@@ -487,39 +487,61 @@ function renderTemplate(title, body, req) {
             </div>
         </div>
     </footer>
-    <script src="//code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $('.quantity-right-plus').click(function (e) {
-                e.preventDefault();
-                var quantity = parseInt($('#quantity').val());
-                $('#quantity').val(quantity + 1);
-            });
-            $('.quantity-left-minus').click(function (e) {
-                e.preventDefault();
-                var quantity = parseInt($('#quantity').val());
-                if (quantity > 1) {
-                    $('#quantity').val(quantity - 1);
+        // Quantity controls
+        document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('quantity-right-plus')) {
+                    e.preventDefault();
+                    const input = document.getElementById('quantity');
+                    if (input) {
+                        input.value = parseInt(input.value) + 1;
+                    }
+                }
+                if (e.target.classList.contains('quantity-left-minus')) {
+                    e.preventDefault();
+                    const input = document.getElementById('quantity');
+                    if (input && parseInt(input.value) > 1) {
+                        input.value = parseInt(input.value) - 1;
+                    }
                 }
             });
-        });
-        (function () {
-            'use strict';
-            window.addEventListener('load', function () {
-                var forms = document.getElementsByClassName('needs-validation');
-                var validation = Array.prototype.filter.call(forms, function (form) {
-                    form.addEventListener('submit', function (event) {
-                        if (form.checkValidity() === false) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                        form.classList.add('was-validated');
-                    }, false);
+
+            // Form validation
+            const forms = document.querySelectorAll('.needs-validation');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
                 });
-            }, false);
-        })();
+            });
+
+            // Animate elements on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+        });
     </script>
 </body>
 </html>`;
@@ -782,19 +804,195 @@ app.get("/", (req, res) => {
 });
 
 app.get("/products", (req, res) => {
-  const body = `<div class="container mt-3">
-            <h2>All Products</h2>
-            <div class="row">
-                ${mockProducts.map((product) => `<div class="col-md-4 mb-4">${renderProductCard(product)}</div>`).join("")}
-            </div>
-        </div>
-        <script>
-            function addToCart(productId) {
-                alert('Product added to cart! (Mock functionality)');
-            }
-        </script>`;
+  const category = req.query.category;
+  let filteredProducts = mockProducts;
 
-  res.send(renderTemplate("Products", body, req));
+  if (category) {
+    filteredProducts = mockProducts.filter((p) =>
+      p.category.toLowerCase().includes(category.toLowerCase()),
+    );
+  }
+
+  const body = `
+    <div class="main-container">
+        <div class="container py-4">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="fw-bold">
+                        <i class="fas fa-toys me-2"></i>
+                        ${category ? "Kategori: " + category : "Tüm Oyuncaklar"}
+                        <span class="badge bg-primary">${filteredProducts.length}</span>
+                    </h2>
+                    <p class="text-muted">En kaliteli oyuncakları keşfedin</p>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="mb-3"><i class="fas fa-filter me-2"></i>Filtreler</h5>
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <select class="form-select" onchange="filterByCategory(this.value)">
+                                <option value="">Tüm Kategoriler</option>
+                                <option value="building" ${category === "building" ? "selected" : ""}>Yapı Setleri</option>
+                                <option value="dolls" ${category === "dolls" ? "selected" : ""}>Bebekler</option>
+                                <option value="vehicles" ${category === "vehicles" ? "selected" : ""}>Araçlar</option>
+                                <option value="educational" ${category === "educational" ? "selected" : ""}>Eğitici</option>
+                                <option value="electronic" ${category === "electronic" ? "selected" : ""}>Elektronik</option>
+                                <option value="plush" ${category === "plush" ? "selected" : ""}>Peluş</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select" onchange="filterByAge(this.value)">
+                                <option value="">Tüm Yaşlar</option>
+                                <option value="0-3">0-3 Yaş</option>
+                                <option value="3-6">3-6 Yaş</option>
+                                <option value="6-12">6-12 Yaş</option>
+                                <option value="12+">12+ Yaş</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select" onchange="sortProducts(this.value)">
+                                <option value="">Sırala</option>
+                                <option value="price-low">Fiyat (Düşük-Yüksek)</option>
+                                <option value="price-high">Fiyat (Yüksek-Düşük)</option>
+                                <option value="rating">En Yüksek Puan</option>
+                                <option value="name">İsme Göre</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Oyuncak ara..." id="searchInput">
+                                <button class="btn btn-primary" onclick="searchProducts()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="btn-group w-100">
+                                <button class="btn btn-outline-secondary active" onclick="setView('grid')">
+                                    <i class="fas fa-th"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="setView('list')">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="row g-4" id="productsContainer">
+                ${filteredProducts
+                  .map(
+                    (product) => `
+                    <div class="col-lg-3 col-md-4 col-sm-6 product-item"
+                         data-category="${product.category.toLowerCase()}"
+                         data-age="${product.ageRange}"
+                         data-price="${product.price}"
+                         data-rating="${product.rating}"
+                         data-name="${product.name.toLowerCase()}">
+                        ${renderProductCard(product)}
+                    </div>
+                `,
+                  )
+                  .join("")}
+            </div>
+
+            ${
+              filteredProducts.length === 0
+                ? `
+                <div class="text-center py-5">
+                    <div style="font-size: 4rem; color: var(--text-light);">🔍</div>
+                    <h4 class="text-muted">Aradığınız kriterlere uygun ürün bulunamadı</h4>
+                    <a href="/products" class="btn btn-primary mt-3">Tüm Ürünleri Görüntüle</a>
+                </div>
+            `
+                : ""
+            }
+        </div>
+    </div>
+
+    <script>
+        function addToCart(productId) {
+            const product = ${JSON.stringify(mockProducts)}.find(p => p.id === productId);
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-success position-fixed';
+            notification.style.cssText = 'top: 100px; right: 20px; z-index: 9999; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);';
+            notification.innerHTML = \`
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>\${product.name}</strong> sepete eklendi!
+            \`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function filterByCategory(category) {
+            if (category) {
+                window.location.href = '/products?category=' + category;
+            } else {
+                window.location.href = '/products';
+            }
+        }
+
+        function filterByAge(age) {
+            const items = document.querySelectorAll('.product-item');
+            items.forEach(item => {
+                if (!age || item.dataset.age.includes(age.split('-')[0])) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function sortProducts(sortBy) {
+            const container = document.getElementById('productsContainer');
+            const items = Array.from(container.children);
+
+            items.sort((a, b) => {
+                switch(sortBy) {
+                    case 'price-low':
+                        return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                    case 'price-high':
+                        return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                    case 'rating':
+                        return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating);
+                    case 'name':
+                        return a.dataset.name.localeCompare(b.dataset.name);
+                    default:
+                        return 0;
+                }
+            });
+
+            items.forEach(item => container.appendChild(item));
+        }
+
+        function searchProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const items = document.querySelectorAll('.product-item');
+
+            items.forEach(item => {
+                if (item.dataset.name.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function setView(viewType) {
+            const buttons = document.querySelectorAll('.btn-group button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Grid/List view logic can be implemented here
+        }
+    </script>`;
+
+  res.send(renderTemplate("Oyuncaklar", body, req));
 });
 
 app.get("/products/:id", (req, res) => {
