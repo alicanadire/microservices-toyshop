@@ -711,6 +711,16 @@ app.get("/", (req, res) => {
 
   const body = `
     <div class="main-container">
+        <!-- Backend Status Alert -->
+        <div id="backend-status" class="alert alert-info d-none m-3">
+            <div class="d-flex align-items-center">
+                <div class="spinner-border spinner-border-sm me-2" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
+                </div>
+                <span>Sistem durumu kontrol ediliyor...</span>
+            </div>
+        </div>
+
         <div class="hero-gradient fade-in">
             <h1 class="display-4 fw-bold mb-3">
                 <i class="fas fa-rocket me-3"></i>
