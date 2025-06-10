@@ -54,12 +54,17 @@ try
 
     builder.Services.AddTransient<IProfileService, ProfileService>();
 
-    // CORS for Shopping Web
+    // CORS for Shopping Web and Gateway
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy("ShoppingWebPolicy", policy =>
+        options.AddPolicy("AllowAll", policy =>
         {
-            policy.WithOrigins("http://localhost:6005")
+            policy.WithOrigins(
+                    "http://localhost:6005",    // Shopping.Web
+                    "http://localhost:6004",    // API Gateway
+                    "http://shopping.web:8080", // Shopping.Web container
+                    "http://yarpapigateway:8080" // API Gateway container
+                  )
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
@@ -81,7 +86,7 @@ try
     // Configure the HTTP request pipeline.
     // Remove HTTPS redirection for HTTP-only setup
 
-    app.UseCors("ShoppingWebPolicy");
+    app.UseCors("AllowAll");
     app.UseRouting();
     app.UseIdentityServer();
     app.UseAuthorization();
