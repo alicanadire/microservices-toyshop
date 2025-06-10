@@ -13,12 +13,12 @@ try
 
     // Ensure we listen on all interfaces
     builder.WebHost.UseUrls("http://+:8080");
-    
+
     // Enhanced logging for debugging
     builder.Logging.ClearProviders();
     builder.Logging.AddConsole();
     builder.Logging.SetMinimumLevel(LogLevel.Debug);
-    
+
     Log.Information("✅ WebHost configured successfully");
     Log.Information("🌐 Listening on: http://+:8080");
     Log.Information("🔧 Environment: {Environment}", builder.Environment.EnvironmentName);
@@ -28,11 +28,11 @@ try
 
     // MongoDB Configuration
     Log.Information("🍃 Configuring MongoDB...");
-    
-    var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDb") 
+
+    var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDb")
         ?? "mongodb://mongodb:27017";
     var mongoDatabaseName = builder.Configuration["MongoDb:DatabaseName"] ?? "IdentityDb";
-    
+
     Log.Information("📊 MongoDB Connection: {ConnectionString}", mongoConnectionString);
     Log.Information("🗄️ Database Name: {DatabaseName}", mongoDatabaseName);
 
@@ -82,7 +82,7 @@ try
         options.Events.RaiseFailureEvents = true;
         options.Events.RaiseSuccessEvents = true;
         options.EmitStaticAudienceClaim = true;
-        options.IssuerUri = builder.Configuration["IdentityServer:IssuerUri"] ?? "http://localhost:5000";
+        options.IssuerUri = builder.Configuration["IdentityServer:IssuerUri"] ?? "http://localhost:6006";
     })
     .AddInMemoryIdentityResources(IdentityServerConfig.IdentityResources)
     .AddInMemoryApiScopes(IdentityServerConfig.ApiScopes)
@@ -138,7 +138,7 @@ try
     }
 
     Log.Information("🔧 Configuring middleware pipeline...");
-    
+
     // Configure the HTTP request pipeline
     if (app.Environment.IsDevelopment())
     {
@@ -151,13 +151,13 @@ try
     app.UseAuthorization();
 
     Log.Information("🌐 Configuring endpoints...");
-    
+
     // Health check and debug endpoints
     app.MapGet("/", () => {
         Log.Information("📡 Root endpoint called");
-        return Results.Ok(new { 
-            service = "Identity Service API", 
-            status = "Running with MongoDB", 
+        return Results.Ok(new {
+            service = "Identity Service API",
+            status = "Running with MongoDB",
             timestamp = DateTime.UtcNow,
             version = "3.0.0-mongodb",
             issuer = app.Configuration["IdentityServer:IssuerUri"],
@@ -165,17 +165,17 @@ try
             database = "MongoDB"
         });
     });
-    
+
     app.MapGet("/health", () => {
         Log.Information("🏥 Health check endpoint called");
-        return Results.Ok(new { 
-            status = "Healthy", 
+        return Results.Ok(new {
+            status = "Healthy",
             timestamp = DateTime.UtcNow,
             database = "MongoDB",
             uptime = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
         });
     });
-    
+
     app.MapGet("/debug/config", () => {
         Log.Information("🔍 Debug config endpoint called");
         return Results.Ok(new {
@@ -192,22 +192,22 @@ try
     });
 
     app.MapGet("/debug/users", async (UserManager<ApplicationUser> userManager) => {
-        var users = userManager.Users.Select(u => new { 
-            u.Email, 
-            u.UserName, 
-            u.FirstName, 
+        var users = userManager.Users.Select(u => new {
+            u.Email,
+            u.UserName,
+            u.FirstName,
             u.LastName,
-            u.IsActive 
+            u.IsActive
         }).ToList();
         return Results.Ok(new { Users = users, Count = users.Count });
     });
 
     Log.Information("🚀 Starting Identity Server with MongoDB...");
-    Log.Information("🌐 Identity Server will be available at: http://localhost:5000");
-    Log.Information("🏥 Health check: http://localhost:5000/health");
-    Log.Information("🔍 Debug info: http://localhost:5000/debug/config");
-    Log.Information("👥 Users info: http://localhost:5000/debug/users");
-    
+    Log.Information("🌐 Identity Server will be available at: http://localhost:6006");
+    Log.Information("🏥 Health check: http://localhost:6006/health");
+    Log.Information("🔍 Debug info: http://localhost:6006/debug/config");
+    Log.Information("👥 Users info: http://localhost:6006/debug/users");
+
     app.Run();
 }
 catch (Exception ex)
@@ -224,8 +224,8 @@ static async Task SeedMongoDataAsync(UserManager<ApplicationUser> userManager, R
     // Create roles
     if (!await roleManager.RoleExistsAsync("Admin"))
     {
-        await roleManager.CreateAsync(new ApplicationRole 
-        { 
+        await roleManager.CreateAsync(new ApplicationRole
+        {
             Name = "Admin",
             Description = "Administrator role with full access"
         });
@@ -233,8 +233,8 @@ static async Task SeedMongoDataAsync(UserManager<ApplicationUser> userManager, R
 
     if (!await roleManager.RoleExistsAsync("Customer"))
     {
-        await roleManager.CreateAsync(new ApplicationRole 
-        { 
+        await roleManager.CreateAsync(new ApplicationRole
+        {
             Name = "Customer",
             Description = "Customer role for shopping"
         });
