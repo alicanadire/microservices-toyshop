@@ -73,6 +73,9 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+// Health Checks
+builder.Services.AddHealthChecks();
+
 // HTTP Client with JWT Token
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<AuthenticationDelegatingHandler>();
@@ -120,5 +123,17 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+// Health Check endpoints
+app.MapHealthChecks("/health");
+app.MapGet("/health/detailed", () =>
+{
+    return Results.Ok(new {
+        status = "Healthy",
+        timestamp = DateTime.UtcNow,
+        service = "Shopping Web",
+        version = "1.0.0"
+    });
+});
 
 app.Run();
