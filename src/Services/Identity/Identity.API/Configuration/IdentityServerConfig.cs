@@ -29,19 +29,28 @@ public static class IdentityServerConfig
         {
             new ApiResource("catalog", "Catalog Service")
             {
-                Scopes = new List<string> { "catalog" }
+                Scopes = new List<string> { "catalog" },
+                UserClaims = new List<string> { "role", "email", "name" }
             },
             new ApiResource("basket", "Basket Service")
             {
-                Scopes = new List<string> { "basket" }
+                Scopes = new List<string> { "basket" },
+                UserClaims = new List<string> { "role", "email", "name", "sub" }
             },
             new ApiResource("ordering", "Ordering Service")
             {
-                Scopes = new List<string> { "ordering" }
+                Scopes = new List<string> { "ordering" },
+                UserClaims = new List<string> { "role", "email", "name", "sub" }
             },
             new ApiResource("shopping", "Shopping Web App")
             {
-                Scopes = new List<string> { "shopping" }
+                Scopes = new List<string> { "shopping" },
+                UserClaims = new List<string> { "role", "email", "name", "sub" }
+            },
+            new ApiResource("gateway", "API Gateway")
+            {
+                Scopes = new List<string> { "catalog", "basket", "ordering" },
+                UserClaims = new List<string> { "role", "email", "name", "sub" }
             }
         };
 

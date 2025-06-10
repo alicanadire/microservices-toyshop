@@ -68,7 +68,7 @@ try
         {
             policy.WithOrigins(
                     "http://localhost:5000",      // Shopping Web
-                    "http://localhost:6006",      // Identity Server  
+                    "http://localhost:6006",      // Identity Server
                     "http://shopping.web:8080",   // Shopping Web container
                     "http://identity.api:8080"    // Identity container
                   )
@@ -91,14 +91,15 @@ try
             options.RequireHttpsMetadata = bool.Parse(identityServerSettings["RequireHttpsMetadata"] ?? "false");
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false,
+                ValidateAudience = true,
+                ValidAudiences = new[] { "catalog", "basket", "ordering", "shopping", "gateway" },
                 ValidateIssuer = true,
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.FromMinutes(5),
                 NameClaimType = "name",
                 RoleClaimType = "role"
             };
-            
+
             // Enhanced logging for JWT events
             options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
             {
@@ -167,7 +168,7 @@ try
         {
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
-            
+
             var error = new
             {
                 error = "Internal Server Error",
@@ -200,19 +201,19 @@ try
     app.Use(async (context, next) =>
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-        
-        Log.Information("🌐 API Gateway Request: {Method} {Path} from {IP}", 
-            context.Request.Method, 
-            context.Request.Path, 
+
+        Log.Information("🌐 API Gateway Request: {Method} {Path} from {IP}",
+            context.Request.Method,
+            context.Request.Path,
             context.Connection.RemoteIpAddress);
 
         await next();
 
         stopwatch.Stop();
-        
-        Log.Information("✅ API Gateway Response: {Method} {Path} -> {StatusCode} in {ElapsedMs}ms", 
-            context.Request.Method, 
-            context.Request.Path, 
+
+        Log.Information("✅ API Gateway Response: {Method} {Path} -> {StatusCode} in {ElapsedMs}ms",
+            context.Request.Method,
+            context.Request.Path,
             context.Response.StatusCode,
             stopwatch.ElapsedMilliseconds);
     });
@@ -228,7 +229,7 @@ try
         features = new[]
         {
             "YARP Reverse Proxy",
-            "JWT Authentication", 
+            "JWT Authentication",
             "Rate Limiting",
             "Health Checks",
             "CORS Support",
@@ -237,7 +238,7 @@ try
         routes = new
         {
             catalog = "/catalog-service/*",
-            basket = "/basket-service/*", 
+            basket = "/basket-service/*",
             ordering = "/ordering-service/*"
         }
     })).AllowAnonymous();
@@ -278,7 +279,7 @@ try
         rateLimits = new
         {
             general = "100 requests/minute",
-            authenticated = "200 requests/minute", 
+            authenticated = "200 requests/minute",
             ordering = "30 requests/minute"
         }
     })).AllowAnonymous();
@@ -291,10 +292,10 @@ try
             // Add correlation ID for request tracking
             var correlationId = Guid.NewGuid().ToString();
             context.Response.Headers.Add("X-Correlation-ID", correlationId);
-            
-            Log.Debug("🔄 Proxy request {CorrelationId}: {Method} {Path}", 
+
+            Log.Debug("🔄 Proxy request {CorrelationId}: {Method} {Path}",
                 correlationId, context.Request.Method, context.Request.Path);
-            
+
             await next();
         });
     });
