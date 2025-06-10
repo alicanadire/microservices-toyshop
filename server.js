@@ -6,6 +6,41 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Backend services configuration
+const BACKEND_SERVICES = {
+  GATEWAY_URL: process.env.GATEWAY_URL || "https://localhost:6064",
+  CATALOG_API: process.env.CATALOG_API || "http://localhost:6000",
+  BASKET_API: process.env.BASKET_API || "http://localhost:6001",
+  ORDERING_API: process.env.ORDERING_API || "http://localhost:6003",
+};
+
+// Check if backend services are available
+const checkBackendService = async (url) => {
+  try {
+    const fetch = require("node-fetch");
+    const response = await fetch(url + "/health", { timeout: 1000 });
+    return response.ok;
+  } catch (error) {
+    return false;
+  }
+};
+
+let backendAvailable = false;
+
+// Test backend availability on startup
+(async () => {
+  try {
+    backendAvailable = await checkBackendService(BACKEND_SERVICES.CATALOG_API);
+    if (backendAvailable) {
+      console.log("✅ Backend services detected - API calls will be proxied");
+    } else {
+      console.log("⚠️  Backend services not available - Using mock data");
+    }
+  } catch (error) {
+    console.log("⚠️  Backend services not available - Using mock data");
+  }
+})();
+
 // Serve static files from wwwroot
 app.use(
   "/css",
