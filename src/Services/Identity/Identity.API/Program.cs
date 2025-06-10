@@ -79,12 +79,8 @@ try
     }
 
     // Configure the HTTP request pipeline.
-    if (!app.Environment.IsDevelopment())
-    {
-        app.UseHsts();
-    }
+    // Remove HTTPS redirection for HTTP-only setup
 
-    app.UseHttpsRedirection();
     app.UseCors("ShoppingWebPolicy");
     app.UseRouting();
     app.UseIdentityServer();
