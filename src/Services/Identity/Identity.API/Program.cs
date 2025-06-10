@@ -102,8 +102,8 @@ try
         options.AddPolicy("AllowAll", policy =>
         {
             policy.WithOrigins(
-                    "http://localhost:6005",    // Shopping.Web
-                    "http://localhost:6004",    // API Gateway
+                    "http://localhost:5000",    // Shopping.Web
+                    "http://localhost:6064",    // API Gateway
                     "http://shopping.web:8080", // Shopping.Web container
                     "http://yarpapigateway:8080" // API Gateway container
                   )
