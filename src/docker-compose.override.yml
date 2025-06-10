@@ -68,17 +68,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=identitydb;Port=5432;Database=IdentityDb;User Id=postgres;Password=postgres;Include Error Detail=true
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     depends_on:
       - identitydb
     ports:
-      - "5001:8081"
       - "5000:8080"
-    volumes:
-      - ~/.aspnet/https:/https:ro
 
   catalog.api:
     environment:

@@ -57,10 +57,10 @@ public static class IdentityServerConfig
                 RequireClientSecret = false,
                 RequirePkce = true,
                 AllowOfflineAccess = true,
-                
-                RedirectUris = { "https://localhost:5001/signin-oidc", "http://localhost:5000/signin-oidc" },
-                PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc", "http://localhost:5000/signout-callback-oidc" },
-                
+
+                RedirectUris = { "http://localhost:6005/signin-oidc", "http://localhost:5001/signin-oidc" },
+                PostLogoutRedirectUris = { "http://localhost:6005/signout-callback-oidc", "http://localhost:5001/signout-callback-oidc" },
+
                 AllowedScopes =
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
@@ -99,11 +99,11 @@ public static class IdentityServerConfig
                 RequireClientSecret = false,
                 RequirePkce = true,
                 AllowOfflineAccess = true,
-                
+
                 RedirectUris = { "http://localhost:3000/callback" },
                 PostLogoutRedirectUris = { "http://localhost:3000" },
                 AllowedCorsOrigins = { "http://localhost:3000" },
-                
+
                 AllowedScopes =
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
