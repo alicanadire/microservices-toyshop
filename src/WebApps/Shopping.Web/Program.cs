@@ -35,7 +35,7 @@ builder.Services.AddAuthentication(options =>
     options.ResponseType = "code";
     options.SaveTokens = true;
     options.GetClaimsFromUserInfoEndpoint = true;
-    options.RequireHttpsMetadata = bool.Parse(identityServerSettings["RequireHttpsMetadata"] ?? "true");
+    options.RequireHttpsMetadata = bool.Parse(identityServerSettings["RequireHttpsMetadata"] ?? "false");
 
     options.Scope.Clear();
     var scopes = identityServerSettings["Scope"]?.Split(' ') ?? Array.Empty<string>();
