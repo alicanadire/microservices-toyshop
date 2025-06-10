@@ -70,9 +70,13 @@ builder.Services.AddAuthentication("Bearer")
         options.RequireHttpsMetadata = bool.Parse(identityServerSettings["RequireHttpsMetadata"] ?? "false");
         options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
-            ValidateAudience = false,
+            ValidateAudience = true,
+            ValidAudiences = new[] { "basket", "shopping" },
             ValidateIssuer = true,
-            ValidateLifetime = true
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromMinutes(5),
+            NameClaimType = "name",
+            RoleClaimType = "role"
         };
     });
 
