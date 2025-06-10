@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
     <title>EShop Microservices - Identity Integration</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { 
+        body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -61,7 +61,7 @@ app.get("/", (req, res) => {
             <h4 class="alert-heading">🎉 EShop Microservices - .NET Core Project</h4>
             <p class="mb-0">This development server serves documentation for the .NET Core microservices project with IdentityServer4.</p>
         </div>
-        
+
         <div class="row">
             <div class="col-md-3">
                 <div class="card">
@@ -77,7 +77,7 @@ app.get("/", (req, res) => {
                         </ul>
                     </div>
                 </div>
-                
+
                 <div class="card mt-3">
                     <div class="card-body">
                         <h5 class="card-title">🔑 Test Users</h5>
@@ -91,7 +91,7 @@ app.get("/", (req, res) => {
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="card mt-3">
                     <div class="card-body">
                         <h5 class="card-title">⚡ Quick Start</h5>
@@ -101,7 +101,7 @@ app.get("/", (req, res) => {
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-9">
                 <div id="markdown-content"></div>
             </div>
@@ -129,14 +129,14 @@ app.get("/api/status", (req, res) => {
     authentication: "IdentityServer4 (Duende)",
     services: {
       "Identity Service": {
-        port: 5001,
+        port: 6006,
         status: "configured",
-        tech: "IdentityServer + ASP.NET Core Identity",
+        tech: "IdentityServer + MongoDB + ASP.NET Core Identity",
       },
       "API Gateway": {
         port: 6064,
         status: "configured",
-        tech: "YARP + JWT Authentication",
+        tech: "YARP + JWT Authentication + Rate Limiting + Health Checks",
       },
       "Shopping Web": {
         port: 5000,
@@ -181,8 +181,14 @@ app.listen(PORT, () => {
   console.log("   📦 Catalog, Basket, Ordering APIs");
   console.log("");
   console.log("⚡ To run the .NET services:");
-  console.log("   cd src/Services/Identity/Identity.API && dotnet run");
-  console.log("   cd src/ApiGateways/YarpApiGateway && dotnet run");
-  console.log("   cd src/WebApps/Shopping.Web && dotnet run");
+  console.log(
+    "   cd src/Services/Identity/Identity.API && dotnet run --urls http://localhost:6006",
+  );
+  console.log(
+    "   cd src/ApiGateways/YarpApiGateway && dotnet run --urls http://localhost:6064",
+  );
+  console.log(
+    "   cd src/WebApps/Shopping.Web && dotnet run --urls http://localhost:5000",
+  );
   console.log("");
 });
