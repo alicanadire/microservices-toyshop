@@ -27,6 +27,7 @@
     "path": "^0.12.7"
   },
   "dependencies": {
-    "http-proxy-middleware": "^3.0.5"
+    "http-proxy-middleware": "^3.0.5",
+    "node-fetch": "^2.7.0"
   }
 }

@@ -1816,18 +1816,103 @@ app.get("/contact", (req, res) => {
 });
 
 // API endpoints for future integration
-app.get("/api/products", (req, res) => {
+// API Proxy middleware for backend services
+app.use(
+  "/api/catalog",
+  createProxyMiddleware({
+    target: BACKEND_SERVICES.GATEWAY_URL,
+    changeOrigin: true,
+    pathRewrite: {
+      "^/api/catalog": "/catalog-service",
+    },
+    onError: (err, req, res) => {
+      console.log("Catalog API error, falling back to mock data");
+      // Fallback to mock data
+      if (req.url.includes("/products")) {
+        res.json(mockProducts);
+      } else {
+        res.status(500).json({ error: "Service unavailable" });
+      }
+    },
+  }),
+);
+
+app.use(
+  "/api/basket",
+  createProxyMiddleware({
+    target: BACKEND_SERVICES.GATEWAY_URL,
+    changeOrigin: true,
+    pathRewrite: {
+      "^/api/basket": "/basket-service",
+    },
+    onError: (err, req, res) => {
+      console.log("Basket API error");
+      res.status(500).json({ error: "Basket service unavailable" });
+    },
+  }),
+);
+
+app.use(
+  "/api/ordering",
+  createProxyMiddleware({
+    target: BACKEND_SERVICES.GATEWAY_URL,
+    changeOrigin: true,
+    pathRewrite: {
+      "^/api/ordering": "/ordering-service",
+    },
+    onError: (err, req, res) => {
+      console.log("Ordering API error");
+      res.status(500).json({ error: "Ordering service unavailable" });
+    },
+  }),
+);
+
+// Legacy API endpoints - fallback to mock data if backend not available
+app.get("/api/products", async (req, res) => {
+  try {
+    if (backendAvailable) {
+      // Try to proxy to backend
+      const fetch = require("node-fetch");
+      const response = await fetch(
+        `${BACKEND_SERVICES.GATEWAY_URL}/catalog-service/products`,
+      );
+      if (response.ok) {
+        const data = await response.json();
+        return res.json(data);
+      }
+    }
+  } catch (error) {
+    console.log("Backend API failed, using mock data");
+  }
+
+  // Fallback to mock data
   res.json(mockProducts);
 });
 
-app.get("/api/products/:id", (req, res) => {
+app.get("/api/products/:id", async (req, res) => {
   const productId = parseInt(req.params.id);
-  const product = mockProducts.find((p) => p.id === productId);
 
+  try {
+    if (backendAvailable) {
+      // Try to proxy to backend
+      const fetch = require("node-fetch");
+      const response = await fetch(
+        `${BACKEND_SERVICES.GATEWAY_URL}/catalog-service/products/${productId}`,
+      );
+      if (response.ok) {
+        const data = await response.json();
+        return res.json(data);
+      }
+    }
+  } catch (error) {
+    console.log("Backend API failed, using mock data");
+  }
+
+  // Fallback to mock data
+  const product = mockProducts.find((p) => p.id === productId);
   if (!product) {
     return res.status(404).json({ error: "Product not found" });
   }
-
   res.json(product);
 });
 
