@@ -1867,6 +1867,83 @@ app.use(
   }),
 );
 
+// Health check endpoint
+app.get("/api/health", async (req, res) => {
+  const services = {
+    frontend: true,
+    gateway: false,
+    catalog: false,
+    basket: false,
+    ordering: false,
+  };
+
+  try {
+    const fetch = require("node-fetch");
+
+    // Test Gateway
+    try {
+      const gatewayResponse = await fetch(
+        `${BACKEND_SERVICES.GATEWAY_URL}/health`,
+        { timeout: 2000 },
+      );
+      services.gateway = gatewayResponse.ok;
+    } catch (error) {
+      services.gateway = false;
+    }
+
+    // Test individual services if gateway is not available
+    if (!services.gateway) {
+      try {
+        const catalogResponse = await fetch(
+          `${BACKEND_SERVICES.CATALOG_API}/health`,
+          { timeout: 2000 },
+        );
+        services.catalog = catalogResponse.ok;
+      } catch (error) {
+        services.catalog = false;
+      }
+
+      try {
+        const basketResponse = await fetch(
+          `${BACKEND_SERVICES.BASKET_API}/health`,
+          { timeout: 2000 },
+        );
+        services.basket = basketResponse.ok;
+      } catch (error) {
+        services.basket = false;
+      }
+
+      try {
+        const orderingResponse = await fetch(
+          `${BACKEND_SERVICES.ORDERING_API}/health`,
+          { timeout: 2000 },
+        );
+        services.ordering = orderingResponse.ok;
+      } catch (error) {
+        services.ordering = false;
+      }
+    } else {
+      // If gateway is available, assume services are available through gateway
+      services.catalog = true;
+      services.basket = true;
+      services.ordering = true;
+    }
+  } catch (error) {
+    console.log("Health check error:", error.message);
+  }
+
+  const isHealthy =
+    services.gateway ||
+    (services.catalog && services.basket && services.ordering);
+
+  res.status(isHealthy ? 200 : 503).json({
+    status: isHealthy ? "healthy" : "degraded",
+    services: services,
+    timestamp: new Date().toISOString(),
+    mode: isHealthy ? "backend" : "mock",
+  });
+});
+
 // Legacy API endpoints - fallback to mock data if backend not available
 app.get("/api/products", async (req, res) => {
   try {
