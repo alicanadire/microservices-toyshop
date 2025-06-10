@@ -1,65 +1,81 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AspnetRunBasics</title>
+    <title>@ViewData["Title"] - Modern E-Shop</title>
 
     <!-- CSS -->
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
+    <link href="//cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="~/css/style.css" rel="stylesheet" type="text/css">
 
 </head>
 <body>
-    <header>
-
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <header class="modern-header">
+        <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">AspnetRunBasics</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand brand-modern" asp-area="" asp-page="/Index">
+                    <i class="fas fa-store me-2"></i>
+                    <span class="brand-text">ModernShop</span>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
-                    <ul class="navbar-nav m-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" asp-area="" asp-page="/Index">Home <span class="sr-only">(current)</span></a>
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav ms-auto me-4">
+                        <li class="nav-item">
+                            <a class="nav-link nav-link-modern" asp-area="" asp-page="/Index">
+                                <i class="fas fa-home me-1"></i>Home
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/ProductList">Product</a>
+                            <a class="nav-link nav-link-modern" asp-area="" asp-page="/ProductList">
+                                <i class="fas fa-shopping-bag me-1"></i>Products
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Cart">Cart</a>
+                            <a class="nav-link nav-link-modern" asp-area="" asp-page="/Cart">
+                                <i class="fas fa-shopping-cart me-1"></i>Cart
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/OrderList">Order</a>
+                            <a class="nav-link nav-link-modern" asp-area="" asp-page="/OrderList">
+                                <i class="fas fa-list me-1"></i>Orders
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Contact">Contact</a>
+                            <a class="nav-link nav-link-modern" asp-area="" asp-page="/Contact">
+                                <i class="fas fa-envelope me-1"></i>Contact
+                            </a>
                         </li>
                     </ul>
 
-                    <form class="form-inline my-2 my-lg-0">
-                        <div class="input-group input-group-sm">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-secondary btn-number">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </div>
+                    <div class="d-flex align-items-center">
+                        <div class="search-container me-3">
+                            <form class="d-flex">
+                                <div class="input-group">
+                                    <input type="text" class="form-control search-input" placeholder="Search products...">
+                                    <button class="btn search-btn" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <a class="btn btn-success btn-sm ml-3" asp-area="" asp-page="/Cart">
-                            <i class="fa fa-shopping-cart"></i> Cart
-                            <span class="badge badge-light">3</span>
+
+                        <a class="btn cart-btn position-relative" asp-area="" asp-page="/Cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge">
+                                3
+                            </span>
                         </a>
-                    </form>
+                    </div>
                 </div>
             </div>
         </nav>
-
-
     </header>
 
     <div class="container">
@@ -70,63 +86,101 @@
 
 
     <!-- Footer -->
-    <footer class="text-light">
+    <footer class="modern-footer mt-5">
         <div class="container">
             <div class="row">
-                <div class="col-md-3 col-lg-4 col-xl-3">
-                    <h5>About</h5>
-                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
-                    <p class="mb-0">
-                        Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression.
-                    </p>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h5 class="footer-title">
+                            <i class="fas fa-store me-2"></i>
+                            ModernShop
+                        </h5>
+                        <p class="footer-text">
+                            Your trusted partner for premium quality products. We bring you the latest trends and best deals in a modern shopping experience.
+                        </p>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto">
-                    <h5>Informations</h5>
-                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
-                    <ul class="list-unstyled">
-                        <li><a href="">Link 1</a></li>
-                        <li><a href="">Link 2</a></li>
-                        <li><a href="">Link 3</a></li>
-                        <li><a href="">Link 4</a></li>
-                    </ul>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h6 class="footer-subtitle">Quick Links</h6>
+                        <ul class="footer-links">
+                            <li><a asp-page="/Index">Home</a></li>
+                            <li><a asp-page="/ProductList">Products</a></li>
+                            <li><a asp-page="/Cart">Shopping Cart</a></li>
+                            <li><a asp-page="/OrderList">My Orders</a></li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto">
-                    <h5>Others links</h5>
-                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
-                    <ul class="list-unstyled">
-                        <li><a href="">Link 1</a></li>
-                        <li><a href="">Link 2</a></li>
-                        <li><a href="">Link 3</a></li>
-                        <li><a href="">Link 4</a></li>
-                    </ul>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h6 class="footer-subtitle">Categories</h6>
+                        <ul class="footer-links">
+                            <li><a href="#">Electronics</a></li>
+                            <li><a href="#">Fashion</a></li>
+                            <li><a href="#">Home & Garden</a></li>
+                            <li><a href="#">Sports</a></li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="col-md-4 col-lg-3 col-xl-3">
-                    <h5>Contact</h5>
-                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
-                    <ul class="list-unstyled">
-                        <li><i class="fa fa-home mr-2"></i> My company</li>
-                        <li><i class="fa fa-envelope mr-2"></i> email@example.com</li>
-                        <li><i class="fa fa-phone mr-2"></i> + 33 12 14 15 16</li>
-                        <li><i class="fa fa-print mr-2"></i> + 33 12 14 15 16</li>
-                    </ul>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h6 class="footer-subtitle">Contact Info</h6>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>123 Modern Street, Tech City</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>info@modernshop.com</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>+1 (555) 123-4567</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Mon - Fri: 9AM - 6PM</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-12 copyright mt-3">
-                    <p class="float-left">
-                        <a href="#">Back to top</a>
-                    </p>
-                    <p class="text-right text-muted">created with <i class="fa fa-heart"></i> by <a href="https://t-php.fr/43-theme-ecommerce-bootstrap-4.html"><i>t-php</i></a> | <span>v. 1.0</span></p>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="copyright-text">
+                            &copy; 2024 ModernShop. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="footer-badges">
+                            <span class="badge-item">
+                                <i class="fas fa-shield-alt me-1"></i>Secure Shopping
+                            </span>
+                            <span class="badge-item">
+                                <i class="fas fa-truck me-1"></i>Fast Delivery
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </footer>
 
     <!-- JS -->
-    <script src="//code.jquery.com/jquery-3.2.1.slim.min.js" type="text/javascript"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" type="text/javascript"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="//code.jquery.com/jquery-3.6.0.min.js" type="text/javascript"></script>
+    <script src="//cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         //Plus & Minus for Quantity product
         $(document).ready(function () {
@@ -174,5 +228,3 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
-
-

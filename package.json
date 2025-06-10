@@ -1,0 +1,35 @@
+{
+  "name": "eshop-microservices",
+  "version": "1.0.0",
+  "description": ".NET 8 Microservices E-Commerce Application",
+  "main": "index.js",
+  "scripts": {
+    "dev": "http-server src/WebApps/Shopping.Web/wwwroot -p 6065 -c-1 -o --cors",
+    "build": "echo 'Building .NET microservices...' && echo 'This project uses Docker Compose for building.' && echo 'Run: docker-compose -f src/docker-compose.yml build'",
+    "start": "npm run dev",
+    "setup": "echo 'Setting up .NET microservices project...' && echo 'This project requires Docker and .NET 8 SDK.' && echo 'Please run setup.ps1 for complete setup on Windows.'",
+    "info": "echo 'This is a .NET 8 microservices project with:' && echo '- Catalog API (Product management)' && echo '- Basket API (Shopping cart)' && echo '- Discount gRPC (Discount service)' && echo '- Ordering API (Order management)' && echo '- YARP Gateway (API Gateway)' && echo '- Shopping Web (Frontend)' && echo '- PostgreSQL, Redis, SQL Server, RabbitMQ'",
+    "docker:up": "cd src && docker-compose -f docker-compose.yml -f docker-compose.override.yml up",
+    "docker:build": "cd src && docker-compose -f docker-compose.yml -f docker-compose.override.yml build",
+    "docker:down": "cd src && docker-compose -f docker-compose.yml -f docker-compose.override.yml down"
+  },
+  "keywords": [
+    "dotnet",
+    "microservices",
+    "ecommerce",
+    "docker",
+    "aspnetcore",
+    "cqrs",
+    "ddd"
+  ],
+  "author": "Mehmet Ozkaya",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aspnetrun/run-aspnetcore-microservices"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {}
+}

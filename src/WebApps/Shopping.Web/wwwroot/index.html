@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>.NET 8 Microservices E-Commerce Application</title>
+    <link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+    <style>
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .main-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        margin: 50px auto;
+        max-width: 1000px;
+        padding: 40px;
+      }
+      .header-title {
+        color: #2c3e50;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .info-card {
+        background: #f8f9fa;
+        border-left: 5px solid #007bff;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 10px;
+      }
+      .warning-card {
+        background: #fff3cd;
+        border-left: 5px solid #ffc107;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 10px;
+      }
+      .success-card {
+        background: #d4edda;
+        border-left: 5px solid #28a745;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 10px;
+      }
+      .service-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+      .service-item {
+        background: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+      .service-item:hover {
+        transform: translateY(-5px);
+      }
+      .code-block {
+        background: #2d3748;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: "Courier New", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+      }
+      .btn-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="main-container">
+        <h1 class="header-title">
+          🏪 .NET 8 Microservices E-Commerce Application
+        </h1>
+
+        <div class="warning-card">
+          <h4>⚠️ Development Mode Notice</h4>
+          <p>
+            You are currently viewing static files only. This is a .NET
+            microservices application that requires Docker Compose to run the
+            full application with all services.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h4>📋 Project Overview</h4>
+          <p>
+            This is a comprehensive e-commerce microservices application built
+            with .NET 8, implementing modern architectural patterns including:
+          </p>
+          <ul>
+            <li><strong>Domain Driven Design (DDD)</strong></li>
+            <li>
+              <strong>Command Query Responsibility Segregation (CQRS)</strong>
+            </li>
+            <li><strong>Event-Driven Architecture</strong></li>
+            <li><strong>Clean Architecture</strong></li>
+            <li><strong>Vertical Slice Architecture</strong></li>
+          </ul>
+        </div>
+
+        <div class="success-card">
+          <h4>🔧 How to Run the Complete Application</h4>
+          <p>To run the full microservices application, you need:</p>
+          <ol>
+            <li>
+              <strong>Docker Desktop</strong> - Install from
+              <a
+                href="https://www.docker.com/products/docker-desktop"
+                target="_blank"
+                >docker.com</a
+              >
+            </li>
+            <li>
+              <strong>.NET 8 SDK</strong> - Install from
+              <a
+                href="https://dotnet.microsoft.com/download/dotnet/8.0"
+                target="_blank"
+                >dotnet.microsoft.com</a
+              >
+            </li>
+            <li>
+              <strong>Visual Studio 2022</strong> or
+              <strong>VS Code</strong> (optional but recommended)
+            </li>
+          </ol>
+
+          <h5>🚀 Quick Start with Docker Compose:</h5>
+          <div class="code-block">
+            # Navigate to the src directory cd src # Build and start all
+            services docker-compose -f docker-compose.yml -f
+            docker-compose.override.yml up -d # Wait for all services to start
+            (takes a few minutes) # Then visit: https://localhost:6065
+          </div>
+        </div>
+
+        <h3>🏗️ Microservices Architecture</h3>
+        <div class="service-list">
+          <div class="service-item">
+            <h5>🛍️ Catalog API</h5>
+            <p><strong>Port:</strong> 6000</p>
+            <p>
+              Product management service with PostgreSQL database. Implements
+              minimal APIs and CQRS pattern.
+            </p>
+          </div>
+
+          <div class="service-item">
+            <h5>🛒 Basket API</h5>
+            <p><strong>Port:</strong> 6001</p>
+            <p>
+              Shopping cart service with Redis cache and gRPC communication with
+              Discount service.
+            </p>
+          </div>
+
+          <div class="service-item">
+            <h5>💰 Discount gRPC</h5>
+            <p><strong>Port:</strong> 6002</p>
+            <p>
+              High-performance discount service using gRPC with SQLite database.
+            </p>
+          </div>
+
+          <div class="service-item">
+            <h5>📦 Ordering API</h5>
+            <p><strong>Port:</strong> 6003</p>
+            <p>
+              Order management service implementing DDD, CQRS with SQL Server
+              and RabbitMQ.
+            </p>
+          </div>
+
+          <div class="service-item">
+            <h5>🌐 YARP API Gateway</h5>
+            <p><strong>Port:</strong> 6004</p>
+            <p>
+              Reverse proxy gateway with rate limiting and routing
+              configuration.
+            </p>
+          </div>
+
+          <div class="service-item">
+            <h5>🖥️ Shopping Web UI</h5>
+            <p><strong>Port:</strong> 6005</p>
+            <p>
+              ASP.NET Core Razor Pages frontend application with Bootstrap 4.
+            </p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h4>🗄️ Databases & Infrastructure</h4>
+          <div class="row">
+            <div class="col-md-6">
+              <ul>
+                <li>
+                  <strong>PostgreSQL</strong> - Catalog & Basket databases
+                </li>
+                <li><strong>SQL Server</strong> - Ordering database</li>
+                <li><strong>SQLite</strong> - Discount database</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <ul>
+                <li><strong>Redis</strong> - Distributed caching</li>
+                <li><strong>RabbitMQ</strong> - Message broker</li>
+                <li><strong>Docker</strong> - Containerization</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h4>🔗 Service URLs (when running with Docker)</h4>
+          <div class="code-block">
+            Shopping Web UI: https://localhost:6065 API Gateway:
+            https://localhost:6064 Catalog API: https://localhost:6060 Basket
+            API: https://localhost:6061 Discount gRPC: https://localhost:6062
+            Ordering API: https://localhost:6063 RabbitMQ Management:
+            http://localhost:15672 (guest/guest)
+          </div>
+        </div>
+
+        <div class="text-center mt-4">
+          <a
+            href="https://github.com/aspnetrun/run-aspnetcore-microservices"
+            target="_blank"
+            class="btn btn-custom"
+          >
+            📚 View Source Code on GitHub
+          </a>
+          <a
+            href="https://www.udemy.com/course/microservices-architecture-and-implementation-on-dotnet/"
+            target="_blank"
+            class="btn btn-custom ml-3"
+          >
+            🎓 Learn More (Udemy Course)
+          </a>
+        </div>
+
+        <div class="info-card mt-4">
+          <h5>👨‍💻 Author</h5>
+          <p>
+            <strong>Mehmet Ozkaya</strong> - Senior Software Engineer &
+            Instructor
+          </p>
+          <p>Specializing in .NET, Microservices, and Cloud Architecture</p>
+        </div>
+      </div>
+    </div>
+
+    <script src="lib/jquery/dist/jquery.min.js"></script>
+    <script src="lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
