@@ -10,39 +10,31 @@ public class IndexModel(ICatalogService catalogService, IBasketService basketSer
 
     public async Task<IActionResult> OnGetAsync()
     {
-        logger.LogInformation("Index page visited");
-
-        // Check if user is authenticated first
-        if (!User.Identity?.IsAuthenticated ?? true)
-        {
-            logger.LogInformation("Anonymous user accessing index page - showing sample products");
-            ProductList = GetSampleProducts();
-            IsDataLoaded = false;
-            ErrorMessage = "Please log in to see our full product catalog";
-            return Page();
-        }
+        logger.LogInformation("Index page visited by {User}",
+            User.Identity?.IsAuthenticated == true ? User.Identity.Name : "anonymous user");
 
         try
         {
             var result = await catalogService.GetProducts();
             ProductList = result.Products ?? new List<ProductModel>();
             IsDataLoaded = true;
-            logger.LogInformation($"Successfully loaded {ProductList.Count()} products for authenticated user");
-        }
-        catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            // Token might be expired or invalid - show sample products
-            logger.LogWarning("Unauthorized access to catalog service - token might be expired");
-            ProductList = GetSampleProducts();
-            IsDataLoaded = false;
-            ErrorMessage = "Your session may have expired. Please log in again to see our full product catalog";
+
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                // Show message for anonymous users
+                ErrorMessage = "Welcome! Log in to access your cart and place orders.";
+            }
+
+            logger.LogInformation($"Successfully loaded {ProductList.Count()} products");
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error loading products on index page");
             ProductList = GetSampleProducts();
             IsDataLoaded = false;
-            ErrorMessage = "Unable to load products at this time. Please try again later";
+            ErrorMessage = User.Identity?.IsAuthenticated == true
+                ? "Unable to load products at this time. Please try again later."
+                : "Welcome to EShop! Please log in to see our full product catalog.";
         }
 
         return Page();
