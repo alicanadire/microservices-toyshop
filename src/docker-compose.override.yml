@@ -1,6 +1,23 @@
 version: "3.4"
 
 services:
+  mongodb:
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password123
+      - MONGO_INITDB_DATABASE=IdentityDb
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   catalogdb:
     container_name: catalogdb
     environment:
@@ -69,11 +86,13 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__Database=Server=identitydb;Port=5432;Database=IdentityDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - ConnectionStrings__MongoDb=mongodb://admin:password123@mongodb:27017/IdentityDb?authSource=admin
+      - MongoDb__DatabaseName=IdentityDb
       - IdentityServer__IssuerUri=http://localhost:5000
       - IdentityServer__PublicOrigin=http://localhost:5000
     depends_on:
-      - identitydb
+      mongodb:
+        condition: service_healthy
     ports:
       - "5000:8080"
     restart: unless-stopped
@@ -173,6 +192,6 @@ services:
     restart: unless-stopped
 
 volumes:
+  mongodb_data:
   postgres_catalog:
   postgres_basket:
-  postgres_identity:

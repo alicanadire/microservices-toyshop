@@ -1,13 +1,13 @@
 version: "3.4"
 
 services:
+  mongodb:
+    image: mongo:7.0
+
   catalogdb:
     image: postgres
 
   basketdb:
-    image: postgres
-
-  identitydb:
     image: postgres
 
   distributedcache:
