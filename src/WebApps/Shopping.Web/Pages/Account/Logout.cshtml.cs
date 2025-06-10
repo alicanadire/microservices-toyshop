@@ -8,11 +8,11 @@ namespace Shopping.Web.Pages.Account;
 
 public class LogoutModel : PageModel
 {
-    public async Task<IActionResult> OnGet()
+    public Task<IActionResult> OnGet()
     {
-        return SignOut(
+        return Task.FromResult<IActionResult>(SignOut(
             new AuthenticationProperties { RedirectUri = "/" },
             CookieAuthenticationDefaults.AuthenticationScheme,
-            OpenIdConnectDefaults.AuthenticationScheme);
+            OpenIdConnectDefaults.AuthenticationScheme));
     }
 }
