@@ -6,6 +6,9 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// JSON parsing middleware
+app.use(express.json());
+
 // Backend services configuration
 const BACKEND_SERVICES = {
   GATEWAY_URL: process.env.GATEWAY_URL || "https://localhost:6064",
