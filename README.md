@@ -1,97 +1,204 @@
-**UDEMY COURSE WITH DISCOUNTED - Step by Step Development of this Repository -> https://www.udemy.com/course/microservices-architecture-and-implementation-on-dotnet/?couponCode=MAYY25**
+# EShop Microservices - Development Preview
 
-See the overall picture of **implementations on microservices with .net tools** on real-world **e-commerce microservices** project;
+This repository contains a .NET 8 microservices-based e-commerce application. The development environment has been configured to provide a frontend preview using Node.js while the actual application is designed to run with .NET and Docker.
 
-![microservices](https://github.com/aspnetrun/run-aspnetcore-microservices/assets/1147445/efe5e688-67f2-4ddd-af37-d9d3658aede4)
+## 🚀 Quick Start (Development Preview)
 
-There is a couple of microservices which implemented **e-commerce** modules over **Catalog, Basket, Discount** and **Ordering** microservices with **NoSQL (DocumentDb, Redis)** and **Relational databases (PostgreSQL, Sql Server)** with communicating over **RabbitMQ Event Driven Communication** and using **Yarp API Gateway**.
+The development server is now running and serving a preview of the e-commerce frontend:
 
-### Check Explanation of this Repository on Medium
-* [.NET 8 Microservices: DDD, CQRS, Vertical/Clean Architecture and Event-Driven Communication](https://medium.com/@mehmetozkaya/net-8-microservices-ddd-cqrs-vertical-clean-architecture-2dd7ebaaf4bd)
+- **Homepage**: http://localhost:3000/
+- **Products**: http://localhost:3000/products
+- **Cart**: http://localhost:3000/cart
+- **Orders**: http://localhost:3000/orders
+- **Contact**: http://localhost:3000/contact
 
-## Whats Including In This Repository
-We have implemented below **features over the run-aspnetcore-microservices repository**.
+## 📁 Project Structure
 
-#### Catalog microservice which includes; 
-* ASP.NET Core Minimal APIs and latest features of .NET8 and C# 12
-* **Vertical Slice Architecture** implementation with Feature folders and single .cs file includes different classes in one file
-* CQRS implementation using MediatR library
-* CQRS Validation Pipeline Behaviors with MediatR and FluentValidation
-* Use Marten library for .NET Transactional Document DB on PostgreSQL
-* Use Carter for Minimal API endpoint definition
-* Cross-cutting concerns Logging, Global Exception Handling and Health Checks
-
-#### Basket microservice which includes;
-* ASP.NET 8 Web API application, Following REST API principles, CRUD
-* Using **Redis** as a **Distributed Cache** over basketdb
-* Implements Proxy, Decorator and Cache-aside patterns
-* Consume Discount **Grpc Service** for inter-service sync communication to calculate product final price
-* Publish BasketCheckout Queue with using **MassTransit and RabbitMQ**
-  
-#### Discount microservice which includes;
-* ASP.NET **Grpc Server** application
-* Build a Highly Performant **inter-service gRPC Communication** with Basket Microservice
-* Exposing Grpc Services with creating **Protobuf messages**
-* Entity Framework Core ORM — SQLite Data Provider and Migrations to simplify data access and ensure high performance
-* **SQLite database** connection and containerization
-
-#### Microservices Communication
-* Sync inter-service **gRPC Communication**
-* Async Microservices Communication with **RabbitMQ Message-Broker Service**
-* Using **RabbitMQ Publish/Subscribe Topic** Exchange Model
-* Using **MassTransit** for abstraction over RabbitMQ Message-Broker system
-* Publishing BasketCheckout event queue from Basket microservices and Subscribing this event from Ordering microservices	
-* Create **RabbitMQ EventBus.Messages library** and add references Microservices
-
-#### Ordering Microservice
-* Implementing **DDD, CQRS, and Clean Architecture** with using Best Practices
-* Developing **CQRS with using MediatR, FluentValidation and Mapster packages**
-* Consuming **RabbitMQ** BasketCheckout event queue with using **MassTransit-RabbitMQ** Configuration
-* **SqlServer database** connection and containerization
-* Using **Entity Framework Core ORM** and auto migrate to SqlServer when application startup
-	
-#### Yarp API Gateway Microservice
-* Develop API Gateways with **Yarp Reverse Proxy** applying Gateway Routing Pattern
-* Yarp Reverse Proxy Configuration; Route, Cluster, Path, Transform, Destinations
-* **Rate Limiting** with FixedWindowLimiter on Yarp Reverse Proxy Configuration
-
-#### WebUI ShoppingApp Microservice
-* ASP.NET Core Web Application with Bootstrap 4 and Razor template
-* Call **Yarp APIs with Refit HttpClientFactory**
-
-#### Docker Compose establishment with all microservices on docker;
-* Containerization of microservices
-* Containerization of databases
-* Override Environment variables
-
-## Run The Project
-You will need the following tools:
-
-* [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)
-* [.Net Core 8 or later](https://dotnet.microsoft.com/download/dotnet-core/8)
-* [Docker Desktop](https://www.docker.com/products/docker-desktop)
-
-### Installing
-Follow these steps to get your development environment set up: (Before Run Start the Docker Desktop)
-1. Clone the repository
-2. Once Docker for Windows is installed, go to the **Settings > Advanced option**, from the Docker icon in the system tray, to configure the minimum amount of memory and CPU like so:
-* **Memory: 4 GB**
-* CPU: 2
-3. At the root directory of solution, select **docker-compose** and **Set a startup project**. **Run docker-compose without debugging on visual studio**.
-  Or you can go to root directory which include **docker-compose.yml** files, run below command:
-```csharp
-docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+```
+eshop-microservices/
+├── src/
+│   ├── ApiGateways/YarpApiGateway/          # API Gateway using YARP
+│   ├── BuildingBlocks/                      # Shared libraries
+│   ├── Services/
+│   │   ├── Basket/Basket.API/              # Shopping Cart Service
+│   │   ├── Catalog/Catalog.API/            # Product Catalog Service
+│   │   ├── Discount/Discount.Grpc/         # Discount Service (gRPC)
+│   │   └── Ordering/                       # Order Management Service
+│   └── WebApps/Shopping.Web/               # Frontend Web Application (ASP.NET Core Razor Pages)
+├── package.json                            # Node.js development setup
+├── server.js                              # Development server
+└── setup.ps1                              # PowerShell setup script for full environment
 ```
 
-4. Wait for docker compose all microservices. That’s it! (some microservices need extra time to work so please wait if not worked in first shut)
+## 🛠️ Current Setup (Development Mode)
 
-5. Launch **Shopping Web UI -> https://localhost:6065** in your browser to view index page. You can use Web project in order to **call microservices over Yarp API Gateway**. When you **checkout the basket** you can follow **queue record on RabbitMQ dashboard**.
+### What's Working:
 
-![mainscreen2](https://user-images.githubusercontent.com/1147445/81381837-08226000-9116-11ea-9489-82645b8dbfc4.png)
+✅ Frontend preview with mock data  
+✅ Responsive design with Bootstrap 4  
+✅ Navigation between pages  
+✅ Product listing and details  
+✅ Contact form (UI only)  
+✅ API endpoints for testing
 
-## Authors
+### What's Not Available (Requires Full Setup):
 
-* **Mehmet Ozkaya** - *Initial work* - [mehmetozkaya](https://github.com/mehmetozkaya)
+❌ Backend microservices  
+❌ Database functionality  
+❌ Authentication/Authorization  
+❌ Real cart and checkout  
+❌ Order processing  
+❌ Payment integration
 
-See also the list of [contributors](https://github.com/aspnetrun/run-core/contributors) who participated in this project. Check also [gihtub page of repository.](https://aspnetrun.github.io/run-aspnetcore-angular-realworld/)
+## 🔧 Development Commands
 
+```bash
+# Start development server
+npm run dev
+
+# Install dependencies
+npm install
+
+# View available scripts
+npm run
+```
+
+## 🏗️ Full Production Setup
+
+To run the complete microservices application, you need:
+
+### Prerequisites:
+
+- **.NET 8 SDK**
+- **Docker Desktop**
+- **Docker Compose**
+- **PowerShell** (for Windows setup)
+
+### Databases:
+
+- **PostgreSQL** (Catalog & Basket services)
+- **SQL Server** (Ordering service)
+- **Redis** (Caching)
+- **RabbitMQ** (Message broker)
+
+### Setup Steps:
+
+1. **Install Prerequisites** listed above
+2. **Run Setup Script**:
+   ```powershell
+   .\setup.ps1
+   ```
+3. **Or Manual Docker Setup**:
+   ```bash
+   cd src
+   docker-compose up -d
+   ```
+
+### Production URLs (after full setup):
+
+- Shopping Web UI: https://localhost:6065
+- API Gateway: https://localhost:6064
+- Catalog API: https://localhost:6060
+- Basket API: https://localhost:6061
+- Discount gRPC: https://localhost:6062
+- Ordering API: https://localhost:6063
+- RabbitMQ Management: http://localhost:15672
+
+## 🏛️ Architecture Overview
+
+This is a **microservices architecture** implementing:
+
+### Services:
+
+1. **Catalog.API** - Product catalog management
+2. **Basket.API** - Shopping cart functionality
+3. **Discount.Grpc** - Discount and coupon system
+4. **Ordering.API** - Order processing and management
+5. **YarpApiGateway** - API Gateway for service routing
+
+### Patterns Implemented:
+
+- **CQRS** (Command Query Responsibility Segregation)
+- **Clean Architecture**
+- **Domain-Driven Design**
+- **Event-Driven Architecture**
+- **API Gateway Pattern**
+- **Database per Service**
+
+### Technologies:
+
+- **.NET 8** - Backend services
+- **ASP.NET Core** - Web framework
+- **Entity Framework Core** - ORM
+- **MediatR** - CQRS implementation
+- **FluentValidation** - Input validation
+- **MassTransit** - Message bus
+- **YARP** - Reverse proxy
+- **Docker** - Containerization
+- **PostgreSQL & SQL Server** - Databases
+- **Redis** - Caching
+- **RabbitMQ** - Message broker
+
+## 🧪 API Testing
+
+### Available Development API Endpoints:
+
+```
+GET /api/products           # Get all products
+GET /api/products/:id       # Get product by ID
+```
+
+### Example API Calls:
+
+```bash
+# Get all products
+curl http://localhost:3000/api/products
+
+# Get specific product
+curl http://localhost:3000/api/products/1
+```
+
+## 🔍 Troubleshooting
+
+### Common Issues:
+
+1. **Port 3000 already in use**:
+
+   ```bash
+   # Change port in server.js or:
+   PORT=3001 npm run dev
+   ```
+
+2. **Missing dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **For full .NET setup issues**:
+   - Ensure Docker Desktop is running
+   - Check PowerShell execution policy
+   - Verify .NET 8 SDK installation
+
+## 🚧 Development Notes
+
+This development setup provides a **frontend preview only**. It's designed to:
+
+- Allow frontend development and testing
+- Demonstrate the UI/UX design
+- Provide mock API endpoints
+- Serve as a starting point for development
+
+For **full functionality**, the complete .NET microservices environment must be set up using Docker Compose.
+
+## 📞 Support
+
+For issues related to:
+
+- **Development preview**: Check browser console and server logs
+- **Full setup**: Refer to `setup.ps1` script and Docker logs
+- **Architecture questions**: Review the source code in `/src` directory
+
+---
+
+**Note**: This is a development environment setup. The actual application is a sophisticated .NET 8 microservices architecture designed for production use.

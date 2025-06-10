@@ -1,0 +1,23 @@
+{
+  "name": "eshop-microservices",
+  "version": "1.0.0",
+  "description": ".NET 8 Microservices E-Commerce Project",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "echo 'Build script for .NET: dotnet build src/eshop-microservices.sln'",
+    "restore": "echo 'Restore script for .NET: dotnet restore src/eshop-microservices.sln'",
+    "docker-up": "echo 'Docker up script: cd src && docker-compose up -d'",
+    "docker-down": "echo 'Docker down script: cd src && docker-compose down'"
+  },
+  "keywords": [
+    "dotnet",
+    "microservices",
+    "ecommerce"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "express": "^4.21.2",
+    "path": "^0.12.7"
+  }
+}
