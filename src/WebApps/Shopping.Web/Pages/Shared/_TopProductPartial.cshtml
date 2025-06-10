@@ -1,21 +1,367 @@
-﻿@model Models.Catalog.ProductModel
+@model Models.Catalog.ProductModel
 
-<div class="col-12 col-md-3">
-    <div class="card">
-        <div class="card-header bg-success text-white text-uppercase">
-            <i class="fa fa-heart"></i> Top product
+<div class="featured-product-card">
+    <div class="featured-header">
+        <div class="featured-badge">
+            <i class="fas fa-crown"></i>
+            <span>Featured Product</span>
         </div>
-        <a asp-page="ProductDetail" asp-route-productId="@Model.Id"><img asp-append-version="true" class="img-fluid border-0" src="~/images/product/@Model.ImageFile" alt="Card image cap"></a>
-            <div class="card-body">
-                <h4 class="card-title text-center"><a asp-page="ProductDetail" asp-route-productId="@Model.Id" title="View Product">@Model.Name</a></h4>
-                <div class="row">
-                    <div class="col">
-                        <p class="btn btn-danger btn-block">@Model.Price $</p>
-                    </div>
-                    <div class="col">
-                        <a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="btn btn-success btn-block">View</a>
-                    </div>
+    </div>
+
+    <div class="featured-image-container">
+        <a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="featured-link">
+            <img asp-append-version="true"
+                 class="featured-image"
+                 src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                 alt="@Model.Name">
+        </a>
+        <div class="featured-overlay">
+            <div class="featured-rating">
+                <div class="stars-large">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
                 </div>
+                <span class="rating-score">5.0</span>
             </div>
+        </div>
+    </div>
+
+    <div class="featured-content">
+        <div class="featured-category">
+            <span class="category-premium">Premium Collection</span>
+        </div>
+
+        <h4 class="featured-title">
+            <a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="featured-title-link">
+                @Model.Name
+            </a>
+        </h4>
+
+        <p class="featured-description">
+            @Model.Description
+        </p>
+
+        <div class="featured-price-section">
+            <div class="price-container">
+                <span class="featured-price">$@Model.Price</span>
+                <span class="price-label">Best Price</span>
+            </div>
+            <div class="savings-info">
+                <span class="savings-amount">Save $@(50)</span>
+                <span class="savings-percent">20% OFF</span>
+            </div>
+        </div>
+
+        <div class="featured-features">
+            <div class="feature-item">
+                <i class="fas fa-shipping-fast"></i>
+                <span>Free Shipping</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-award"></i>
+                <span>Top Rated</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>2 Year Warranty</span>
+            </div>
+        </div>
+
+        <div class="featured-actions">
+            <a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="btn btn-featured-primary">
+                <i class="fas fa-eye me-2"></i>
+                View Details
+            </a>
+            <form asp-page-handler="AddToCart" method="post" class="featured-cart-form">
+                <button type="submit" class="btn btn-featured-secondary">
+                    <i class="fas fa-shopping-cart me-2"></i>
+                    Add to Cart
+                </button>
+                <input type="hidden" asp-for="@Model.Id" name="productId" />
+            </form>
+        </div>
+
+        <div class="featured-stats">
+            <div class="stat-item">
+                <span class="stat-number">1,247</span>
+                <span class="stat-label">Sold</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">4.9</span>
+                <span class="stat-label">Rating</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">98%</span>
+                <span class="stat-label">Satisfied</span>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+.featured-product-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    color: white;
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.featured-header {
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.featured-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+.featured-badge i {
+    color: #fbbf24;
+    font-size: 1.1rem;
+}
+
+.featured-image-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.featured-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.featured-link:hover .featured-image {
+    transform: scale(1.1);
+}
+
+.featured-overlay {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stars-large {
+    color: #fbbf24;
+    font-size: 0.8rem;
+}
+
+.rating-score {
+    color: var(--dark-color);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.featured-content {
+    padding: 1.5rem;
+}
+
+.featured-category {
+    margin-bottom: 0.75rem;
+}
+
+.category-premium {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+}
+
+.featured-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.featured-title-link {
+    color: white;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.featured-title-link:hover {
+    color: #fbbf24;
+}
+
+.featured-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.featured-price-section {
+    margin-bottom: 1.5rem;
+}
+
+.price-container {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.featured-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fbbf24;
+}
+
+.price-label {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.savings-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.savings-amount {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #10b981;
+}
+
+.savings-percent {
+    background: #ef4444;
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.featured-features {
+    margin-bottom: 1.5rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+.feature-item i {
+    color: #fbbf24;
+    width: 16px;
+}
+
+.featured-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.featured-cart-form {
+    width: 100%;
+}
+
+.btn-featured-primary,
+.btn-featured-secondary {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius-sm);
+    font-weight: 600;
+    border: none;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-featured-primary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.btn-featured-primary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-featured-secondary {
+    background: #fbbf24;
+    color: var(--dark-color);
+}
+
+.btn-featured-secondary:hover {
+    background: #f59e0b;
+    color: var(--dark-color);
+    transform: translateY(-2px);
+}
+
+.featured-stats {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fbbf24;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .featured-content {
+        padding: 1rem;
+    }
+
+    .featured-price {
+        font-size: 1.5rem;
+    }
+
+    .featured-title {
+        font-size: 1.1rem;
+    }
+}
+</style>
