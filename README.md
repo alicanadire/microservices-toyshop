@@ -1,204 +1,177 @@
 # 🧸 ToyShop - Modern Oyuncak Mağazası
 
-Bu proje .NET 8 mikroservis mimarisi ile geliştirilmiş modern bir oyuncak e-ticaret platformudur. Geliştirme ortamı Node.js ile frontend önizlemesi sağlarken, gerçek uygulama .NET ve Docker ile çalışacak şekilde tasarlanmı��tır.
+Bu proje .NET 8 mikroservis mimarisi ile geliştirilmiş modern bir oyuncak e-ticaret platformudur. Geliştirme ortamı Node.js ile frontend önizlemesi sağlarken, gerçek uygulama .NET ve Docker ile çalışacak şekilde tasarlanmıştır.
 
-## 🚀 Hızlı Başlangıç (Geliştirme Önizlemesi)
+## 🚀 Hızlı Başlangıç
 
-Geliştirme sunucusu çalışıyor ve oyuncak mağazasının modern arayüzünü sunuyor:
+### 1. Frontend (Geliştirme Önizlemesi) ✅ ÇALIŞIYOR
+
+```bash
+npm install
+npm run dev
+# http://localhost:3000 adresinde açılır
+```
+
+**Mevcut URL'ler:**
 
 - **Ana Sayfa**: http://localhost:3000/ - Oyuncak kategorileri ve öne çıkan ürünler
 - **Oyuncaklar**: http://localhost:3000/products - Tüm oyuncak kataloğu
 - **Sepet**: http://localhost:3000/cart - Alışveriş sepeti
 - **Siparişler**: http://localhost:3000/orders - Sipariş geçmişi
 - **İletişim**: http://localhost:3000/contact - Müşteri desteği
+- **Health Check**: http://localhost:3000/api/health - Sistem durumu
 
-## 📁 Project Structure
+### 2. Backend (.NET Mikroservisler) ⚠️ KURULUM GEREKLİ
 
-```
-eshop-microservices/
-├── src/
-│   ├── ApiGateways/YarpApiGateway/          # API Gateway using YARP
-│   ├── BuildingBlocks/                      # Shared libraries
-│   ├── Services/
-│   │   ├── Basket/Basket.API/              # Shopping Cart Service
-│   │   ├── Catalog/Catalog.API/            # Product Catalog Service
-│   │   ├── Discount/Discount.Grpc/         # Discount Service (gRPC)
-│   │   └── Ordering/                       # Order Management Service
-│   └── WebApps/Shopping.Web/               # Frontend Web Application (ASP.NET Core Razor Pages)
-├── package.json                            # Node.js development setup
-├── server.js                              # Development server
-└── setup.ps1                              # PowerShell setup script for full environment
-```
-
-## 🛠️ Current Setup (Development Mode)
-
-### What's Working:
-
-✅ Frontend preview with mock data
-✅ Responsive design with Bootstrap 4
-✅ Navigation between pages
-✅ Product listing and details
-✅ Contact form (UI only)
-✅ API endpoints for testing
-
-### What's Not Available (Requires Full Setup):
-
-❌ Backend microservices
-❌ Database functionality
-❌ Authentication/Authorization
-❌ Real cart and checkout
-❌ Order processing
-❌ Payment integration
-
-## 🔧 Development Commands
+#### Otomatik Kurulum (Önerilen)
 
 ```bash
-# Start development server
-npm run dev
+# Linux/Mac
+./start-backend.sh
 
-# Install dependencies
-npm install
-
-# View available scripts
-npm run
+# Windows
+./start-backend.ps1
 ```
 
-## 🏗️ Full Production Setup
-
-To run the complete microservices application, you need:
-
-### Prerequisites:
-
-- **.NET 8 SDK**
-- **Docker Desktop**
-- **Docker Compose**
-- **PowerShell** (for Windows setup)
-
-### Databases:
-
-- **PostgreSQL** (Catalog & Basket services)
-- **SQL Server** (Ordering service)
-- **Redis** (Caching)
-- **RabbitMQ** (Message broker)
-
-### Setup Steps:
-
-1. **Install Prerequisites** listed above
-2. **Run Setup Script**:
-   ```powershell
-   .\setup.ps1
-   ```
-3. **Or Manual Docker Setup**:
-   ```bash
-   cd src
-   docker-compose up -d
-   ```
-
-### Production URLs (after full setup):
-
-- Shopping Web UI: https://localhost:6065
-- API Gateway: https://localhost:6064
-- Catalog API: https://localhost:6060
-- Basket API: https://localhost:6061
-- Discount gRPC: https://localhost:6062
-- Ordering API: https://localhost:6063
-- RabbitMQ Management: http://localhost:15672
-
-## 🏛️ Architecture Overview
-
-This is a **microservices architecture** implementing:
-
-### Services:
-
-1. **Catalog.API** - Product catalog management
-2. **Basket.API** - Shopping cart functionality
-3. **Discount.Grpc** - Discount and coupon system
-4. **Ordering.API** - Order processing and management
-5. **YarpApiGateway** - API Gateway for service routing
-
-### Patterns Implemented:
-
-- **CQRS** (Command Query Responsibility Segregation)
-- **Clean Architecture**
-- **Domain-Driven Design**
-- **Event-Driven Architecture**
-- **API Gateway Pattern**
-- **Database per Service**
-
-### Technologies:
-
-- **.NET 8** - Backend services
-- **ASP.NET Core** - Web framework
-- **Entity Framework Core** - ORM
-- **MediatR** - CQRS implementation
-- **FluentValidation** - Input validation
-- **MassTransit** - Message bus
-- **YARP** - Reverse proxy
-- **Docker** - Containerization
-- **PostgreSQL & SQL Server** - Databases
-- **Redis** - Caching
-- **RabbitMQ** - Message broker
-
-## 🧪 API Testing
-
-### Available Development API Endpoints:
-
-```
-GET /api/products           # Get all products
-GET /api/products/:id       # Get product by ID
-```
-
-### Example API Calls:
+#### Manuel Docker Kurulumu
 
 ```bash
-# Get all products
-curl http://localhost:3000/api/products
-
-# Get specific product
-curl http://localhost:3000/api/products/1
+cd src
+docker-compose up -d
 ```
 
-## 🔍 Troubleshooting
+#### Manuel .NET Kurulumu
 
-### Common Issues:
+```bash
+# Her servisi ayrı terminal'de çalıştırın:
+cd src/Services/Catalog/Catalog.API && dotnet run        # Port 6000
+cd src/Services/Basket/Basket.API && dotnet run         # Port 6001
+cd src/Services/Discount/Discount.Grpc && dotnet run    # Port 6002
+cd src/Services/Ordering/Ordering.API && dotnet run     # Port 6003
+cd src/ApiGateways/YarpApiGateway && dotnet run         # Port 6004
+cd src/WebApps/Shopping.Web && dotnet run               # Port 6005
+```
 
-1. **Port 3000 already in use**:
+## 📊 Sistem Durumu
+
+| Servis Türü            | URL                              | Durum              | Açıklama                |
+| ---------------------- | -------------------------------- | ------------------ | ----------------------- |
+| **Frontend (Node.js)** | http://localhost:3000            | ✅ Aktif           | Mock data ile çalışıyor |
+| **Health Check**       | http://localhost:3000/api/health | ✅ Aktif           | Sistem durumu           |
+| **Backend Gateway**    | https://localhost:6064           | ⚠️ Kurulum Gerekli | .NET API Gateway        |
+| **Shopping Web**       | https://localhost:6065           | ⚠️ Kurulum Gerekli | .NET Web Uygulaması     |
+| **Catalog API**        | http://localhost:6000            | ⚠️ Kurulum Gerekli | Ürün kataloğu           |
+| **Basket API**         | http://localhost:6001            | ⚠️ Kurulum Gerekli | Sepet yönetimi          |
+| **Discount gRPC**      | http://localhost:6002            | ⚠️ Kurulum Gerekli | İndirim servisi         |
+| **Ordering API**       | http://localhost:6003            | ⚠️ Kurulum Gerekli | Sipariş yönetimi        |
+
+## 🔧 Sorun Giderme
+
+### API Çağrıları Çalışmıyor?
+
+1. **Frontend Mock Modu** (Şu anki durum):
+
+   - ✅ Mock veriler kullanılıyor
+   - ✅ Frontend çalışıyor
+   - ⚠️ Backend servisleri kullanılamıyor
+
+2. **Backend Kurulum Kontrolü**:
 
    ```bash
-   # Change port in server.js or:
-   PORT=3001 npm run dev
+   # Sistem durumunu kontrol et
+   curl http://localhost:3000/api/health
+
+   # .NET SDK kontrolü
+   dotnet --version
+
+   # Docker kontrolü
+   docker --version
    ```
 
-2. **Missing dependencies**:
+3. **Detaylı Çözüm Kılavuzu**: `API_SORUN_COZUM_KILAVUZU.md` dosyasına bakın
 
-   ```bash
-   npm install
-   ```
+### Hızlı Reset
 
-3. **For full .NET setup issues**:
-   - Ensure Docker Desktop is running
-   - Check PowerShell execution policy
-   - Verify .NET 8 SDK installation
+```bash
+# Backend'i durdur
+./stop-backend.sh
 
-## 🚧 Development Notes
+# Yeniden başlat
+./start-backend.sh
+```
 
-This development setup provides a **frontend preview only**. It's designed to:
+## 📁 Proje Yapısı
 
-- Allow frontend development and testing
-- Demonstrate the UI/UX design
-- Provide mock API endpoints
-- Serve as a starting point for development
+```
+toyshop-microservices/
+├── 🌐 Frontend (Node.js)
+│   ├── package.json                        # Node.js geliştirme kurulumu
+│   ├── server.js                          # Geliştirme sunucusu
+│   └── API_SORUN_COZUM_KILAVUZU.md       # Sorun giderme kılavuzu
+├── 🔧 Kurulum Scriptleri
+│   ├── start-backend.sh/.ps1             # Backend başlatma
+│   └── stop-backend.sh                    # Backend durdurma
+└── 🏗️ Backend (.NET)
+    ├── src/
+    │   ├── ApiGateways/YarpApiGateway/    # API Gateway (YARP)
+    │   ├── BuildingBlocks/                # Paylaşılan kütüphaneler
+    │   ├── Services/
+    │   │   ├── Basket/Basket.API/        # Sepet Servisi
+    │   │   ├── Catalog/Catalog.API/      # Ürün Kataloğu Servisi
+    │   │   ├── Discount/Discount.Grpc/   # İndirim Servisi (gRPC)
+    │   │   └── Ordering/                 # Sipariş Yönetimi Servisi
+    │   └── WebApps/Shopping.Web/         # .NET Web Uygulaması
+    └── docker-compose.yml                # Docker kurulumu
+```
 
-For **full functionality**, the complete .NET microservices environment must be set up using Docker Compose.
+## 🎯 Özellikler
 
-## 📞 Support
+### Şu Anda Aktif (Frontend)
 
-For issues related to:
+- ✅ Modern oyuncak mağazası arayüzü
+- ✅ 8 farklı oyuncak kategorisi
+- ✅ Türkçe dil desteği
+- ✅ Responsive tasarım
+- ✅ Mock veri API'leri
+- ✅ Sistem durum kontrolü
 
-- **Development preview**: Check browser console and server logs
-- **Full setup**: Refer to `setup.ps1` script and Docker logs
-- **Architecture questions**: Review the source code in `/src` directory
+### Hedeflenen (Backend)
 
----
+- 🎯 .NET 8 mikroservis mimarisi
+- 🎯 Docker containerization
+- 🎯 PostgreSQL, Redis, SQL Server veritabanları
+- 🎯 RabbitMQ mesaj kuyruğu
+- 🎯 CQRS, DDD, Event-Driven patterns
+- 🎯 API Gateway (YARP)
+- 🎯 gRPC iletişimi
 
-**Note**: This is a development environment setup. The actual application is a sophisticated .NET 8 microservices architecture designed for production use.
+## 🛠️ Gereksinimler
+
+### Frontend İçin
+
+- Node.js 16+
+- npm veya yarn
+
+### Backend İçin
+
+- .NET 8 SDK
+- Docker & Docker Compose
+- Git
+
+## 📚 Dokümantasyon
+
+- `API_SORUN_COZUM_KILAVUZU.md` - API sorunları çözüm kılavuzu
+- `PROJE_DETAYLI_DOKUMANTASYON.md` - Detaylı teknik dokümantasyon
+- `CALISTIRMA_KILAVUZU.md` - Kurulum ve çalıştırma kılavuzu
+
+## 📞 Destek
+
+Sorun yaşıyorsanız:
+
+1. `API_SORUN_COZUM_KILAVUZU.md` dosyasını kontrol edin
+2. Health check endpoint'ini test edin: http://localhost:3000/api/health
+3. Backend servislerinin çalışıp çalışmadığını kontrol edin
+
+## 🎉 Çocukların Oyuncak Dünyasına Hoş Geldiniz!
+
+Bu proje, çocuklar için güvenli ve eğlenceli alışveriş deneyimi sunan modern bir oyuncak mağazasıdır. LEGO'dan Barbie'ye, Hot Wheels'den eğitici oyuncaklara kadar geniş ürün yelpazesi ile çocukların hayal gücünü destekler.
