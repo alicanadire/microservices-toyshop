@@ -1259,61 +1259,292 @@ app.get("/products/:id", (req, res) => {
 });
 
 app.get("/cart", (req, res) => {
-  const body = `<div class="container mt-3">
-            <h2>Shopping Cart</h2>
-            <div class="alert alert-info">
-                <i class="fa fa-info-circle"></i> This is a development preview.
-                The cart functionality requires the backend microservices to be running.
-            </div>
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Cart Items</h4>
-                        </div>
-                        <div class="card-body">
-                            <p>Your cart is empty. <a href="/products">Continue shopping</a></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Order Summary</h4>
-                        </div>
-                        <div class="card-body">
-                            <p><strong>Subtotal: $0.00</strong></p>
-                            <p><strong>Shipping: $0.00</strong></p>
-                            <hr>
-                            <p><strong>Total: $0.00</strong></p>
-                            <button class="btn btn-success btn-block" disabled>Proceed to Checkout</button>
-                        </div>
-                    </div>
+  const body = `
+    <div class="main-container">
+        <div class="container py-4">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="fw-bold">
+                        <i class="fas fa-shopping-cart me-2"></i>Alışveriş Sepetim
+                    </h2>
+                    <p class="text-muted">Sepetinizdeki ürünleri inceleyin</p>
                 </div>
             </div>
-        </div>`;
 
-  res.send(renderTemplate("Cart", body, req));
+            <div class="alert alert-info border-0 rounded-3">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-info-circle me-3 fa-2x"></i>
+                    <div>
+                        <h5 class="mb-1">Geliştirme Önizlemesi</h5>
+                        <p class="mb-0">Sepet işlevselliği backend mikroservislerin çalışmasını gerektirir. Şu anda demo modunda çalışmaktasınız.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Cart Items -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-list me-2"></i>Sepetim</h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Empty Cart State -->
+                            <div class="text-center py-5">
+                                <div class="mb-4" style="font-size: 4rem; color: var(--text-light);">🛒</div>
+                                <h4 class="text-muted mb-3">Sepetiniz şu anda boş</h4>
+                                <p class="text-muted mb-4">Harika oyuncaklar keşfetmek için alışverişe başlayın!</p>
+                                <a href="/products" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-toys me-2"></i>Oyuncakları Keşfet
+                                </a>
+                            </div>
+
+                            <!-- Demo Cart Items (can be shown when items exist) -->
+                            <div class="d-none">
+                                <div class="cart-item d-flex align-items-center border-bottom py-3">
+                                    <div class="cart-item-image me-3" style="width: 80px; height: 80px; background: var(--blue-color); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                                        🧸
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">LEGO Creator Expert</h6>
+                                        <small class="text-muted">Yapı Setleri</small>
+                                        <div class="mt-2">
+                                            <span class="fw-bold text-success">₺2,699.70</span>
+                                        </div>
+                                    </div>
+                                    <div class="cart-item-controls d-flex align-items-center">
+                                        <button class="btn btn-sm btn-outline-secondary me-2">-</button>
+                                        <span class="mx-2">1</span>
+                                        <button class="btn btn-sm btn-outline-secondary me-3">+</button>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Suggested Products -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-lightbulb me-2"></i>Size Önerilir</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                ${mockProducts
+                                  .slice(0, 3)
+                                  .map(
+                                    (product) => `
+                                    <div class="col-md-4">
+                                        <div class="suggested-item text-center p-3 border rounded">
+                                            <div class="mb-2" style="font-size: 2rem;">${product.name.match(/[🏠🏰🏎️🧸🎮📱🎨🚁]/)?.[0] || "🧸"}</div>
+                                            <h6 class="mb-1">${product.name}</h6>
+                                            <div class="text-success fw-bold mb-2">₺${(product.price * 30).toFixed(2)}</div>
+                                            <button class="btn btn-sm btn-outline-primary">Sepete Ekle</button>
+                                        </div>
+                                    </div>
+                                `,
+                                  )
+                                  .join("")}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="col-lg-4">
+                    <div class="card sticky-top" style="top: 100px;">
+                        <div class="card-header">
+                            <h4><i class="fas fa-calculator me-2"></i>Sipariş Özeti</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="summary-row d-flex justify-content-between mb-2">
+                                <span>Ara Toplam:</span>
+                                <span>₺0,00</span>
+                            </div>
+                            <div class="summary-row d-flex justify-content-between mb-2">
+                                <span>Kargo:</span>
+                                <span class="text-success">Ücretsiz</span>
+                            </div>
+                            <div class="summary-row d-flex justify-content-between mb-3">
+                                <span>İndirim:</span>
+                                <span class="text-success">-₺0,00</span>
+                            </div>
+                            <hr>
+                            <div class="summary-total d-flex justify-content-between mb-4">
+                                <strong>Toplam:</strong>
+                                <strong class="text-success">₺0,00</strong>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-success btn-lg" disabled>
+                                    <i class="fas fa-credit-card me-2"></i>Ödemeye Geç
+                                </button>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fas fa-heart me-2"></i>Favorilere Kaydet
+                                </button>
+                            </div>
+
+                            <!-- Promo Code -->
+                            <div class="mt-4">
+                                <label class="form-label"><i class="fas fa-tag me-2"></i>Promosyon Kodu</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Kod giriniz">
+                                    <button class="btn btn-outline-secondary">Uygula</button>
+                                </div>
+                            </div>
+
+                            <!-- Payment Methods -->
+                            <div class="mt-4">
+                                <small class="text-muted d-block mb-2">Kabul edilen ödeme yöntemleri:</small>
+                                <div class="payment-methods">
+                                    <i class="fab fa-cc-visa fa-2x me-2 text-primary"></i>
+                                    <i class="fab fa-cc-mastercard fa-2x me-2 text-warning"></i>
+                                    <i class="fas fa-credit-card fa-2x me-2 text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Info -->
+                    <div class="card mt-3">
+                        <div class="card-body text-center">
+                            <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+                            <h6>Güvenli Alışveriş</h6>
+                            <small class="text-muted">256-bit SSL sertifikası ile korumalı</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+  res.send(renderTemplate("Sepetim", body, req));
 });
 
 app.get("/orders", (req, res) => {
-  const body = `<div class="container mt-3">
-            <h2>Order History</h2>
-            <div class="alert alert-info">
-                <i class="fa fa-info-circle"></i> This is a development preview.
-                Order functionality requires the backend microservices to be running.
-            </div>
-            <div class="card">
-                <div class="card-header">
-                    <h4>Your Orders</h4>
-                </div>
-                <div class="card-body">
-                    <p>No orders found. <a href="/products">Start shopping</a></p>
+  const body = `
+    <div class="main-container">
+        <div class="container py-4">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="fw-bold">
+                        <i class="fas fa-list-alt me-2"></i>Siparişlerim
+                    </h2>
+                    <p class="text-muted">Geçmiş siparişlerinizi takip edin</p>
                 </div>
             </div>
-        </div>`;
 
-  res.send(renderTemplate("Orders", body, req));
+            <div class="alert alert-info border-0 rounded-3">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-info-circle me-3 fa-2x"></i>
+                    <div>
+                        <h5 class="mb-1">Geliştirme Önizlemesi</h5>
+                        <p class="mb-0">Sipariş işlevselliği backend mikroservislerin çalışmasını gerektirir. Şu anda demo modunda çalışmaktasınız.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty Orders State -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="text-center py-5">
+                        <div class="mb-4" style="font-size: 4rem; color: var(--text-light);">📦</div>
+                        <h4 class="text-muted mb-3">Henüz siparişiniz bulunmuyor</h4>
+                        <p class="text-muted mb-4">İlk siparişinizi oluşturmak için alışverişe başlayın!</p>
+                        <a href="/products" class="btn btn-primary btn-lg">
+                            <i class="fas fa-toys me-2"></i>Alışverişe Başla
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo Orders (when orders exist) -->
+            <div class="d-none">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-0">Sipariş #TOY2024001</h5>
+                                    <small class="text-muted">15 Mart 2024</small>
+                                </div>
+                                <span class="badge bg-success fs-6">Teslim Edildi</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="order-items">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div class="order-item-image me-3" style="width: 60px; height: 60px; background: var(--blue-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                                    🧸
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-1">LEGO Creator Expert</h6>
+                                                    <small class="text-muted">Adet: 1</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <div class="order-total mb-2">
+                                            <strong>₺2,699.70</strong>
+                                        </div>
+                                        <div class="order-actions">
+                                            <button class="btn btn-sm btn-outline-primary me-2">Detaylar</button>
+                                            <button class="btn btn-sm btn-outline-secondary">Tekrar Sipariş</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-bolt me-2"></i>Hızlı İşlemler</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <a href="/products" class="btn btn-outline-primary w-100">
+                                        <i class="fas fa-toys d-block mb-2 fa-2x"></i>
+                                        Yeni Sipariş
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-outline-secondary w-100">
+                                        <i class="fas fa-heart d-block mb-2 fa-2x"></i>
+                                        Favorilerim
+                                    </button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-outline-info w-100">
+                                        <i class="fas fa-truck d-block mb-2 fa-2x"></i>
+                                        Kargo Takip
+                                    </button>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="/contact" class="btn btn-outline-warning w-100">
+                                        <i class="fas fa-headset d-block mb-2 fa-2x"></i>
+                                        Destek
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+  res.send(renderTemplate("Siparişlerim", body, req));
 });
 
 app.get("/contact", (req, res) => {
