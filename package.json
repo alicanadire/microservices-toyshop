@@ -1,0 +1,24 @@
+{
+  "name": "eshop-microservices",
+  "version": "1.0.0",
+  "description": "EShop Microservices with IdentityServer4 - .NET Core Project",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "setup": "echo 'Setting up EShop Microservices project...' && echo 'This is a .NET Core project. Please install .NET SDK 8.0 to run the microservices.'"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "microservices",
+    "dotnet",
+    "identityserver",
+    "eshop"
+  ],
+  "author": "Builder.io",
+  "license": "MIT"
+}

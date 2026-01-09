@@ -1,4 +1,6 @@
-﻿namespace Shopping.Web.Services;
+using Refit;
+
+namespace Shopping.Web.Services;
 
 public interface IOrderingService
 {

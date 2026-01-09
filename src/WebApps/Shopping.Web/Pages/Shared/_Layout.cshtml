@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AspnetRunBasics</title>
+    <title>@ViewData["Title"] - EShop Microservices</title>
 
     <!-- CSS -->
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -17,7 +17,9 @@
 
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">AspnetRunBasics</a>
+                <a class="navbar-brand" asp-area="" asp-page="/Index">
+                    <i class="fa fa-shopping-bag"></i> EShop Microservices
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -50,10 +52,41 @@
                                 </button>
                             </div>
                         </div>
-                        <a class="btn btn-success btn-sm ml-3" asp-area="" asp-page="/Cart">
-                            <i class="fa fa-shopping-cart"></i> Cart
-                            <span class="badge badge-light">3</span>
-                        </a>
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a class="btn btn-success btn-sm ml-3" asp-area="" asp-page="/Cart">
+                                <i class="fa fa-shopping-cart"></i> Cart
+                                <span class="badge badge-light">3</span>
+                            </a>
+
+                            <div class="dropdown ml-2">
+                                <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-user"></i> @(User.Identity.Name ?? "User")
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                                    <a class="dropdown-item" asp-area="" asp-page="/Account/Profile">
+                                        <i class="fa fa-user-circle"></i> Profile
+                                    </a>
+                                    <a class="dropdown-item" asp-area="" asp-page="/OrderList">
+                                        <i class="fa fa-list"></i> My Orders
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" asp-area="" asp-page="/Account/Logout">
+                                        <i class="fa fa-sign-out"></i> Logout
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <a class="btn btn-outline-light btn-sm ml-3" asp-area="" asp-page="/Account/Login">
+                                <i class="fa fa-sign-in"></i> Login
+                            </a>
+                            <a class="btn btn-success btn-sm ml-2" asp-area="" asp-page="/Account/Register">
+                                <i class="fa fa-user-plus"></i> Register
+                            </a>
+                        }
                     </form>
                 </div>
             </div>
@@ -174,5 +207,3 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
-
-

@@ -1,0 +1,60 @@
+# Enhanced Identity Service Dockerfile with Debug Support
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 8080
+
+# Install curl for health checks
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Set environment variables for better debugging
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://+:8080
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+ENV ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=true
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy project files with better error handling
+COPY ["Services/Identity/Identity.API/Identity.API.csproj", "Services/Identity/Identity.API/"]
+COPY ["BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "BuildingBlocks/BuildingBlocks/"]
+
+# Restore with verbose logging
+RUN dotnet restore "Services/Identity/Identity.API/Identity.API.csproj" --verbosity normal
+
+# Copy source code
+COPY . .
+
+# Build with detailed output
+WORKDIR "/src/Services/Identity/Identity.API"
+RUN dotnet build "Identity.API.csproj" -c Release -o /app/build --verbosity normal
+
+# Publish with detailed output
+FROM build AS publish
+RUN dotnet publish "Identity.API.csproj" -c Release -o /app/publish /p:UseAppHost=false --verbosity normal
+
+# Final stage with health check
+FROM base AS final
+WORKDIR /app
+
+# Copy published files
+COPY --from=publish /app/publish .
+
+# Add health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
+
+# Create a startup script for better error handling
+RUN echo '#!/bin/bash\n\
+echo "🔑 Starting Identity Server..."\n\
+echo "Environment: $ASPNETCORE_ENVIRONMENT"\n\
+echo "URLs: $ASPNETCORE_URLS"\n\
+echo "Working Directory: $(pwd)"\n\
+echo "Files in directory:"\n\
+ls -la\n\
+echo "Starting application..."\n\
+exec dotnet Identity.API.dll' > /app/start.sh
+
+RUN chmod +x /app/start.sh
+
+ENTRYPOINT ["/app/start.sh"]

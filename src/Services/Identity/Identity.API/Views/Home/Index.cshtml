@@ -1,0 +1,63 @@
+@{
+    ViewData["Title"] = "EShop Identity Server";
+}
+
+<div class="container mt-5">
+    <div class="text-center">
+        <div class="jumbotron bg-primary text-white">
+            <h1 class="display-4">
+                <i class="fas fa-shield-alt"></i> 
+                EShop Identity Server
+            </h1>
+            <p class="lead">
+                Secure authentication and authorization service for EShop microservices
+            </p>
+            <hr class="my-4 bg-white">
+            <p class="mb-0">
+                This is the central identity provider for the EShop e-commerce platform.
+            </p>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">User Management</h5>
+                        <p class="card-text">Secure user registration, authentication, and profile management.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-key fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">OAuth 2.0 / OpenID Connect</h5>
+                        <p class="card-text">Industry-standard protocols for secure API access and single sign-on.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-cogs fa-3x text-info mb-3"></i>
+                        <h5 class="card-title">Microservices Security</h5>
+                        <p class="card-text">Centralized security for distributed microservices architecture.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-5">
+            <h3>Quick Actions</h3>
+            <div class="btn-group mt-3" role="group">
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-success">
+                    <i class="fas fa-user-plus"></i> Register
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

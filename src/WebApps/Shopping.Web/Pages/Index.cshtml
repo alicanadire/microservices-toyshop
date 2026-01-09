@@ -1,7 +1,40 @@
-﻿@page
+@page
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+}
+
+@if (!Model.IsDataLoaded)
+{
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading"><i class="fa fa-exclamation-triangle"></i> Service Connection Issue</h4>
+        <p>We're experiencing connectivity issues with our backend services. You can still browse our sample products below.</p>
+        <hr>
+        <p class="mb-0">
+            <strong>Status:</strong> Backend microservices may be starting up or temporarily unavailable.
+        </p>
+    </div>
+}
+else if (!User.Identity?.IsAuthenticated == true && !string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading"><i class="fa fa-info-circle"></i> Welcome to EShop Microservices!</h4>
+        <p>Discover our amazing product catalog powered by modern microservices architecture.</p>
+        <hr>
+        <p class="mb-0">
+            <a href="/Account/Login" class="btn btn-primary"><i class="fa fa-sign-in"></i> Sign In</a>
+            or
+            <a href="/Account/Register" class="btn btn-success"><i class="fa fa-user-plus"></i> Register</a>
+            to access your cart and place orders!
+        </p>
+    </div>
+}
+else if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading"><i class="fa fa-user"></i> Welcome back, @User.Identity.Name!</h4>
+        <p>Browse our products and continue shopping. Your cart and order history are available.</p>
+    </div>
 }
 
 <hr />
