@@ -1,83 +1,212 @@
-﻿@page
+@page
 @model Shopping.Web.Pages.CartModel
 @{
-    ViewData["Title"] = "Cart";
+    ViewData["Title"] = "Shopping Cart - Review Your Items";
 }
+
+<!-- Breadcrumb -->
+<div class="container">
+    <nav aria-label="breadcrumb" class="modern-breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-page="Index">
+                    <i class="fas fa-home me-1"></i>Home
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-page="ProductList">Products</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Shopping Cart
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<!-- Page Header -->
+<div class="container mb-4">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="page-title">
+                    <i class="fas fa-shopping-cart me-2"></i>
+                    Shopping Cart
+                </h1>
+                <p class="page-subtitle">Review your selected items before checkout</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="cart-progress">
+                    <div class="progress-step active">
+                        <span class="step-number">1</span>
+                        <span class="step-text">Cart</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step">
+                        <span class="step-number">2</span>
+                        <span class="step-text">Checkout</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step">
+                        <span class="step-number">3</span>
+                        <span class="step-text">Payment</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <div class="row">
-        <div class="col">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-page="Index">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Cart</li>
-                </ol>
-            </nav>
+        <!-- Cart Items -->
+        <div class="col-lg-8">
+            <div class="cart-section">
+                <div class="cart-header">
+                    <h3 class="section-title">Cart Items (@Model.Cart.Items.Count())</h3>
+                    <div class="cart-actions">
+                        <button class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-heart me-1"></i>Save for Later
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-trash me-1"></i>Clear Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cart-items">
+                    @foreach (var cartItem in Model.Cart.Items)
+                    {
+                        <div class="cart-item">
+                            <div class="item-image">
+                                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+                                     alt="@cartItem.ProductName" class="product-thumbnail">
+                            </div>
+
+                            <div class="item-details">
+                                <h5 class="item-name">@cartItem.ProductName</h5>
+                                <div class="item-meta">
+                                    <span class="item-sku">SKU: #@cartItem.ProductId</span>
+                                    <span class="item-status available">
+                                        <i class="fas fa-check-circle me-1"></i>In Stock
+                                    </span>
+                                </div>
+                                <div class="item-features">
+                                    <span class="feature-badge">
+                                        <i class="fas fa-shipping-fast me-1"></i>Free Shipping
+                                    </span>
+                                    <span class="feature-badge">
+                                        <i class="fas fa-shield-alt me-1"></i>2 Year Warranty
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="item-quantity">
+                                <label class="quantity-label">Quantity</label>
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn quantity-decrease" type="button">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <input class="quantity-input" type="number" value="@cartItem.Quantity" min="1" max="10">
+                                    <button class="quantity-btn quantity-increase" type="button">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="item-price">
+                                <div class="price-info">
+                                    <span class="unit-price">$@cartItem.Price each</span>
+                                    <span class="total-price">$@(cartItem.Price * cartItem.Quantity)</span>
+                                </div>
+                            </div>
+
+                            <div class="item-actions">
+                                <button class="action-btn save-btn" title="Save for Later">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                                <form asp-page-handler="removetocart" method="post" class="d-inline">
+                                    <button class="action-btn remove-btn" type="submit" title="Remove Item">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    <input type="hidden" asp-for="@cartItem.ProductId" name="productId" />
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Continue Shopping -->
+                <div class="continue-shopping">
+                    <a asp-page="ProductList" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div class="order-summary">
+                <div class="summary-header">
+                    <h4 class="summary-title">Order Summary</h4>
+                </div>
+
+                <div class="summary-content">
+                    <div class="summary-row">
+                        <span class="summary-label">Subtotal (@Model.Cart.Items.Count() items)</span>
+                        <span class="summary-value">$@Model.Cart.TotalPrice</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Shipping</span>
+                        <span class="summary-value free">Free</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Tax</span>
+                        <span class="summary-value">$@((Model.Cart.TotalPrice * 0.08m).ToString("F2"))</span>
+                    </div>
+                    <div class="summary-separator"></div>
+                    <div class="summary-row total-row">
+                        <span class="summary-label">Total</span>
+                        <span class="summary-value">$@((Model.Cart.TotalPrice * 1.08m).ToString("F2"))</span>
+                    </div>
+                </div>
+
+                <div class="summary-actions">
+                    <a asp-page="Checkout" class="btn btn-primary btn-lg checkout-btn">
+                        <i class="fas fa-lock me-2"></i>
+                        Secure Checkout
+                    </a>
+
+                    <div class="payment-methods">
+                        <span class="payment-text">We accept:</span>
+                        <div class="payment-icons">
+                            <i class="fab fa-cc-visa"></i>
+                            <i class="fab fa-cc-mastercard"></i>
+                            <i class="fab fa-cc-amex"></i>
+                            <i class="fab fa-cc-paypal"></i>
+                        </div>
+                    </div>
+
+                    <div class="security-info">
+                        <i class="fas fa-shield-alt me-2"></i>
+                        <span>Your information is secure and encrypted</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promo Code -->
+            <div class="promo-section">
+                <div class="promo-header">
+                    <h5 class="promo-title">Have a Promo Code?</h5>
+                </div>
+                <div class="promo-content">
+                    <div class="input-group">
+                        <input type="text" class="form-control promo-input" placeholder="Enter promo code">
+                        <button class="btn btn-outline-primary" type="button">Apply</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-<div class="container mb-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col"> </th>
-                            <th scope="col">Product</th>
-                            <th scope="col">Available</th>
-                            <th scope="col" class="text-center">Quantity</th>
-                            <th scope="col" class="text-right">Price</th>
-                            <th> </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        @foreach (var cartItem in Model.Cart.Items)
-                        {
-                            <tr>
-                                <td><img src="https://dummyimage.com/50x50/55595c/fff" /></td>
-                                <td>@cartItem.ProductName</td>
-                                <td>In stock</td>
-                                <td><input class="form-control" type="text" value="@cartItem.Quantity" /></td>
-                                <td class="text-right">@(cartItem.Price * cartItem.Quantity) $</td>
-                                <td class="text-right">
-
-                                    <form asp-page-handler="removetocart" method="post">
-                                        <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
-                                        <input type="hidden" asp-for="@cartItem.ProductId" name="productId" />
-                                    </form>
-
-                                </td>
-                            </tr>
-                        }
-
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><strong>Total</strong></td>
-                            <td class="text-right"><strong>@Model.Cart.TotalPrice $</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="col mb-2">
-            <div class="row">
-                <div class="col-sm-12  col-md-6">
-                    @*<button class="btn btn-lg btn-block btn-danger">Continue Shopping</button>*@
-                    <a asp-page="Product" class="btn btn-lg btn-block btn-success">Continue Shopping</a>
-                </div>
-                <div class="col-sm-12 col-md-6 text-right">
-                    @*<button class="btn btn-lg btn-block btn-danger text-uppercase">CheckOut</button>*@
-                    <a asp-page="CheckOut" class="btn btn-lg btn-block btn-danger text-uppercase">CheckOut</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-

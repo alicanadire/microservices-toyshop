@@ -1,86 +1,173 @@
-﻿@page
+@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home - Modern Shopping Experience";
 }
 
-<hr />
+<!-- Hero Section -->
+<div class="container-fluid px-0">
+    <div class="hero-section">
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="hero-slide">
+                        <img class="d-block w-100" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Modern Shopping Experience">
+                        <div class="carousel-caption hero-caption">
+                            <h1 class="hero-title fade-in-up">Welcome to ModernShop</h1>
+                            <p class="hero-subtitle fade-in-up">Discover amazing products with the best shopping experience</p>
+                            <a asp-page="/ProductList" class="btn btn-primary btn-lg hero-btn fade-in-up">
+                                <i class="fas fa-shopping-bag me-2"></i>Shop Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="hero-slide">
+                        <img class="d-block w-100" src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Premium Quality">
+                        <div class="carousel-caption hero-caption">
+                            <h1 class="hero-title fade-in-up">Premium Quality</h1>
+                            <p class="hero-subtitle fade-in-up">Carefully curated products for the modern lifestyle</p>
+                            <a asp-page="/ProductList" class="btn btn-success btn-lg hero-btn fade-in-up">
+                                <i class="fas fa-award me-2"></i>Explore Collection
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="hero-slide">
+                        <img class="d-block w-100" src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Fast Delivery">
+                        <div class="carousel-caption hero-caption">
+                            <h1 class="hero-title fade-in-up">Fast & Secure</h1>
+                            <p class="hero-subtitle fade-in-up">Free shipping on orders over $50 with secure payment</p>
+                            <a asp-page="/ProductList" class="btn btn-warning btn-lg hero-btn fade-in-up">
+                                <i class="fas fa-truck me-2"></i>Free Shipping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</div>
 
+<!-- Features Section -->
+<div class="container my-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <h5 class="feature-title">Fast Delivery</h5>
+                <p class="feature-text">Free shipping on orders over $50. Get your products delivered in 2-3 business days.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h5 class="feature-title">Secure Payment</h5>
+                <p class="feature-text">Your payment information is processed securely. We do not store credit card details.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h5 class="feature-title">24/7 Support</h5>
+                <p class="feature-text">Get help when you need it. Our customer support team is here to help you.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hero Product and Latest Products -->
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                <ol class="carousel-indicators">
-                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-                </ol>
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img class="d-block w-100" src="~/images/banner/banner1.png" alt="First slide">
-                    </div>
-                    <div class="carousel-item">
-                        <img class="d-block w-100" src="~/images/banner/banner2.png" alt="Second slide">
-                    </div>
-                    <div class="carousel-item">
-                        <img class="d-block w-100" src="~/images/banner/banner3.png" alt="Second slide">
-                    </div>
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <!-- Latest Products -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-star text-warning me-2"></i>
+                        Latest Products
+                    </h2>
+                    <p class="section-subtitle">Discover our newest arrivals</p>
                 </div>
-                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                    <span class="sr-only">Next</span>
-                </a>
-            </div>
-        </div>
-
-        <partial name="_TopProductPartial" model="Model.ProductList.FirstOrDefault()" />
-
-    </div>
-</div>
-
-<div class="container mt-3">
-    <div class="row">
-        <div class="col-sm">
-            <div class="card">
-                <div class="card-header bg-primary text-white text-uppercase">
-                    <i class="fa fa-star"></i> Last products
+                <div class="row g-3">
+                    @foreach (var product in Model.ProductList.Take(4))
+                    {
+                        <div class="col-lg-6">
+                            <partial name="_ProductItemPartial" model="@product" />
+                        </div>
+                    }
                 </div>
-                <div class="card-body">
-                    <div class="row">
-
-                        @foreach (var product in Model.ProductList.Take(4))
-                        {
-                            <div class="col-sm">
-                                <partial name="_ProductItemPartial" model="@product" />
-                            </div>
-                        }
-
-                    </div>
+                <div class="text-center mt-4">
+                    <a asp-page="/ProductList" class="btn btn-outline-primary">
+                        <i class="fas fa-th-large me-2"></i>View All Products
+                    </a>
                 </div>
             </div>
         </div>
+
+        <div class="col-lg-4">
+            <!-- Featured Product -->
+            <partial name="_TopProductPartial" model="Model.ProductList.FirstOrDefault()" />
+
+            <!-- Newsletter Signup -->
+            <div class="newsletter-card">
+                <div class="newsletter-content">
+                    <h5 class="newsletter-title">
+                        <i class="fas fa-envelope me-2"></i>
+                        Stay Updated
+                    </h5>
+                    <p class="newsletter-text">Subscribe to get special offers, free giveaways, and updates on new products.</p>
+                    <form class="newsletter-form">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Enter your email">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="container mt-3 mb-4">
-    <div class="row">
-        <div class="col-sm">
-            <div class="card">
-                <div class="card-header bg-primary text-white text-uppercase">
-                    <i class="fa fa-trophy"></i> Best products
+<!-- Best Products Section -->
+<div class="container my-5">
+    <div class="section-card">
+        <div class="section-header text-center">
+            <h2 class="section-title">
+                <i class="fas fa-trophy text-warning me-2"></i>
+                Best Sellers
+            </h2>
+            <p class="section-subtitle">Our customers' favorite products</p>
+        </div>
+        <div class="row g-3">
+            @foreach (var product in Model.ProductList.TakeLast(4))
+            {
+                <div class="col-lg-3 col-md-6">
+                    <partial name="_ProductItemPartial" model="@product" />
                 </div>
-                <div class="card-body">
-                    <div class="row">
-
-                        @foreach (var product in Model.ProductList.TakeLast(4))
-                        {
-                            <div class="col-sm">
-                                <partial name="_ProductItemPartial" model="@product" />
-                            </div>
-                        }
-
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
 </div>

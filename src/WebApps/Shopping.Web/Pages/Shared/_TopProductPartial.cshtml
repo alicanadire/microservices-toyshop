@@ -1,21 +1,102 @@
-﻿@model Models.Catalog.ProductModel
+@model Models.Catalog.ProductModel
 
-<div class="col-12 col-md-3">
-    <div class="card">
-        <div class="card-header bg-success text-white text-uppercase">
-            <i class="fa fa-heart"></i> Top product
+<div class="featured-product-card">
+    <div class="featured-header">
+        <div class="featured-badge">
+            <i class="fas fa-crown"></i>
+            <span>Featured Product</span>
         </div>
-        <a asp-page="ProductDetail" asp-route-productId="@Model.Id"><img asp-append-version="true" class="img-fluid border-0" src="~/images/product/@Model.ImageFile" alt="Card image cap"></a>
-            <div class="card-body">
-                <h4 class="card-title text-center"><a asp-page="ProductDetail" asp-route-productId="@Model.Id" title="View Product">@Model.Name</a></h4>
-                <div class="row">
-                    <div class="col">
-                        <p class="btn btn-danger btn-block">@Model.Price $</p>
-                    </div>
-                    <div class="col">
-                        <a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="btn btn-success btn-block">View</a>
-                    </div>
+    </div>
+
+    <div class="featured-image-container">
+        <a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="featured-link">
+            <img asp-append-version="true"
+                 class="featured-image"
+                 src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                 alt="@Model.Name">
+        </a>
+        <div class="featured-overlay">
+            <div class="featured-rating">
+                <div class="stars-large">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
                 </div>
+                <span class="rating-score">5.0</span>
             </div>
+        </div>
+    </div>
+
+    <div class="featured-content">
+        <div class="featured-category">
+            <span class="category-premium">Premium Collection</span>
+        </div>
+
+        <h4 class="featured-title">
+            <a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="featured-title-link">
+                @Model.Name
+            </a>
+        </h4>
+
+        <p class="featured-description">
+            @Model.Description
+        </p>
+
+        <div class="featured-price-section">
+            <div class="price-container">
+                <span class="featured-price">$@Model.Price</span>
+                <span class="price-label">Best Price</span>
+            </div>
+            <div class="savings-info">
+                <span class="savings-amount">Save $@(50)</span>
+                <span class="savings-percent">20% OFF</span>
+            </div>
+        </div>
+
+        <div class="featured-features">
+            <div class="feature-item">
+                <i class="fas fa-shipping-fast"></i>
+                <span>Free Shipping</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-award"></i>
+                <span>Top Rated</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>2 Year Warranty</span>
+            </div>
+        </div>
+
+        <div class="featured-actions">
+            <a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="btn btn-featured-primary">
+                <i class="fas fa-eye me-2"></i>
+                View Details
+            </a>
+            <form asp-page-handler="AddToCart" method="post" class="featured-cart-form">
+                <button type="submit" class="btn btn-featured-secondary">
+                    <i class="fas fa-shopping-cart me-2"></i>
+                    Add to Cart
+                </button>
+                <input type="hidden" asp-for="@Model.Id" name="productId" />
+            </form>
+        </div>
+
+        <div class="featured-stats">
+            <div class="stat-item">
+                <span class="stat-number">1,247</span>
+                <span class="stat-label">Sold</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">4.9</span>
+                <span class="stat-label">Rating</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">98%</span>
+                <span class="stat-label">Satisfied</span>
+            </div>
+        </div>
     </div>
 </div>
