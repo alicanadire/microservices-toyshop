@@ -1,0 +1,344 @@
+@page
+@model Shopping.Web.Pages.Account.ProfileModel
+@{
+    ViewData["Title"] = "My Profile - EShop";
+}
+
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="profile-info">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="profile-details">
+                            <h1 class="profile-name">@Model.User.FullName</h1>
+                            <p class="profile-email">@Model.User.Email</p>
+                            <div class="profile-badges">
+                                @foreach (var role in Model.User.Roles)
+                                {
+                                    <span class="badge profile-badge">@role</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="/Account/Logout" class="btn btn-outline-light">
+                        <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="profile-card">
+                        <div class="card-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3>Personal Information</h3>
+                        <div class="info-item">
+                            <strong>Full Name:</strong>
+                            <span>@Model.User.FullName</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Email:</strong>
+                            <span>@Model.User.Email</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>User ID:</strong>
+                            <span class="text-muted small">@Model.User.Id</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 mb-4">
+                    <div class="profile-card">
+                        <div class="card-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <h3>Shopping Activities</h3>
+                        <div class="activity-item">
+                            <i class="fas fa-shopping-cart"></i>
+                            <div>
+                                <strong>Shopping Cart</strong>
+                                <p>View and manage your cart items</p>
+                            </div>
+                            <a href="/Cart" class="btn btn-sm btn-primary">View Cart</a>
+                        </div>
+                        <div class="activity-item">
+                            <i class="fas fa-history"></i>
+                            <div>
+                                <strong>Order History</strong>
+                                <p>Track your past orders</p>
+                            </div>
+                            <a href="/OrderList" class="btn btn-sm btn-primary">View Orders</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 mb-4">
+                    <div class="profile-card">
+                        <div class="card-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <h3>Account Settings</h3>
+                        <div class="setting-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <div>
+                                <strong>Account Security</strong>
+                                <p>Manage your password and security settings</p>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <i class="fas fa-bell"></i>
+                            <div>
+                                <strong>Notifications</strong>
+                                <p>Configure your notification preferences</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="quick-actions">
+                        <h3><i class="fas fa-bolt me-2"></i>Quick Actions</h3>
+                        <div class="action-buttons">
+                            <a href="/ProductList" class="action-btn">
+                                <i class="fas fa-search"></i>
+                                <span>Browse Products</span>
+                            </a>
+                            <a href="/Cart" class="action-btn">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>View Cart</span>
+                            </a>
+                            <a href="/OrderList" class="action-btn">
+                                <i class="fas fa-list"></i>
+                                <span>My Orders</span>
+                            </a>
+                            <a href="/" class="action-btn">
+                                <i class="fas fa-home"></i>
+                                <span>Home</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .profile-container {
+            min-height: calc(100vh - 80px);
+            background: #f8f9fa;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .profile-avatar {
+            font-size: 4rem;
+            opacity: 0.9;
+        }
+
+        .profile-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .profile-email {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin: 8px 0;
+        }
+
+        .profile-badges {
+            display: flex;
+            gap: 8px;
+        }
+
+        .profile-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 0.85rem;
+        }
+
+        .profile-content {
+            padding: 60px 0;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .profile-card h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item, .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .activity-item:last-child, .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item i, .setting-item i {
+            width: 40px;
+            height: 40px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+        }
+
+        .activity-item div, .setting-item div {
+            flex: 1;
+        }
+
+        .activity-item strong, .setting-item strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .activity-item p, .setting-item p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .quick-actions {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        .quick-actions h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-3px);
+        }
+
+        .action-btn i {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .action-btn span {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        @@media (max-width: 768px) {
+            .profile-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 16px;
+            }
+
+            .profile-name {
+                font-size: 2rem;
+            }
+
+            .activity-item, .setting-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .action-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+}

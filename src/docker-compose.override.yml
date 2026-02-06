@@ -1,4 +1,4 @@
-version: '3.4'
+version: "3.4"
 
 services:
   catalogdb:
@@ -9,10 +9,10 @@ services:
       - POSTGRES_DB=CatalogDb
     restart: always
     ports:
-        - "5432:5432"
+      - "5432:5432"
     volumes:
-      - postgres_catalog:/var/lib/postgresql/data/ 
-      
+      - postgres_catalog:/var/lib/postgresql/data/
+
   basketdb:
     container_name: basketdb
     environment:
@@ -21,9 +21,21 @@ services:
       - POSTGRES_DB=BasketDb
     restart: always
     ports:
-        - "5433:5432"
+      - "5433:5432"
     volumes:
-      - postgres_basket:/var/lib/postgresql/data/ 
+      - postgres_basket:/var/lib/postgresql/data/
+
+  identitydb:
+    container_name: identitydb
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=IdentityDb
+    restart: always
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_identity:/var/lib/postgresql/data/
 
   distributedcache:
     container_name: distributedcache
@@ -50,6 +62,18 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+
+  identity.api:
+    container_name: identity.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__Database=Server=identitydb;Port=5432;Database=IdentityDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - IdentityServer__IssuerUri=http://localhost:5000
+    depends_on:
+      - identitydb
+    ports:
+      - "5000:8080"
 
   catalog.api:
     environment:
@@ -106,7 +130,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
+      - IdentityServerSettings__Authority=http://identity.api:8080
+      - IdentityServerSettings__ApiName=gateway
+      - IdentityServerSettings__RequireHttpsMetadata=false
     depends_on:
+      - identity.api
       - catalog.api
       - basket.api
       - ordering.api
@@ -118,7 +146,13 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ApiSettings__GatewayAddress=http://yarpapigateway:8080
+      - IdentityServerSettings__Authority=http://localhost:5000
+      - IdentityServerSettings__ClientId=shopping-web
+      - IdentityServerSettings__ClientSecret=""
+      - IdentityServerSettings__RequireHttpsMetadata=false
+      - IdentityServerSettings__Scope=openid profile email roles catalog basket ordering shopping
     depends_on:
+      - identity.api
       - yarpapigateway
     ports:
       - "6005:8080"
@@ -126,3 +160,4 @@ services:
 volumes:
   postgres_catalog:
   postgres_basket:
+  postgres_identity:

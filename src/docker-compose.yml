@@ -1,10 +1,13 @@
-version: '3.4'
+version: "3.4"
 
 services:
   catalogdb:
     image: postgres
 
   basketdb:
+    image: postgres
+
+  identitydb:
     image: postgres
 
   distributedcache:
@@ -16,13 +19,21 @@ services:
   messagebroker:
     image: rabbitmq:management
 
+  identity.api:
+    image: ${DOCKER_REGISTRY-}identityapi
+    build:
+      context: .
+      dockerfile: Services/Identity/Identity.API/Dockerfile
+    ports:
+      - "5000:8080"
+
   catalog.api:
     image: ${DOCKER_REGISTRY-}catalogapi
     build:
       context: .
       dockerfile: Services/Catalog/Catalog.API/Dockerfile
     ports:
-      - "8080:8080"
+      - "6000:8080"
 
   basket.api:
     image: ${DOCKER_REGISTRY-}basketapi
@@ -30,7 +41,7 @@ services:
       context: .
       dockerfile: Services/Basket/Basket.API/Dockerfile
     ports:
-      - "8081:8080"
+      - "6001:8080"
 
   discount.grpc:
     image: ${DOCKER_REGISTRY-}discountgrpc
@@ -38,7 +49,7 @@ services:
       context: .
       dockerfile: Services/Discount/Discount.Grpc/Dockerfile
     ports:
-      - "8082:8080"
+      - "6002:8080"
 
   ordering.api:
     image: ${DOCKER_REGISTRY-}orderingapi
@@ -46,7 +57,7 @@ services:
       context: .
       dockerfile: Services/Ordering/Ordering.API/Dockerfile
     ports:
-      - "8083:8080"
+      - "6003:8080"
 
   yarpapigateway:
     image: ${DOCKER_REGISTRY-}yarpapigateway
@@ -54,7 +65,7 @@ services:
       context: .
       dockerfile: ApiGateways/YarpApiGateway/Dockerfile
     ports:
-      - "8084:8080"
+      - "6004:8080"
 
   shopping.web:
     image: ${DOCKER_REGISTRY-}shoppingweb
@@ -62,14 +73,9 @@ services:
       context: .
       dockerfile: WebApps/Shopping.Web/Dockerfile
     ports:
-      - "8085:8080"
+      - "6005:8080"
 
 volumes:
   postgres_catalog:
   postgres_basket:
-
-
-
-
-
-
+  postgres_identity:
